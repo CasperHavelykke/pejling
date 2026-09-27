@@ -1,9 +1,14 @@
+import { useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { drinkName, type DrinkLog } from "../domain/drinks";
-import { genstandWord, hhmm, unitsX10Label } from "../domain/format";
+import {
+  entryWord,
+  genstandWord,
+  hhmm,
+  unitsX10Label,
+} from "../domain/format";
 import { colors, fonts, radius, space } from "../theme/tokens";
 import { BottomPanel } from "./BottomPanel";
-import { Chevron } from "./Chevron";
 
 export function TonightDrawer({
   open,
@@ -23,10 +28,20 @@ export function TonightDrawer({
   bottomInset: number;
   onUndo: (id: number) => void;
 }) {
+  // Listen ruller kun, når den er længere end pladsen. Ellers ejer
+  // trækket hele panelet. Er listen rullet ned, skal den rulle op igen,
+  // før et træk lukker panelet.
+  const scrollY = useRef(0);
+  const [listHeight, setListHeight] = useState(0);
+  const [contentHeight, setContentHeight] = useState(0);
+  const scrollable = contentHeight > listHeight + 1;
+
   return (
     <BottomPanel
       open={open}
       onClose={onClose}
+      draggable
+      canStartDrag={() => !scrollable || scrollY.current <= 0}
       style={[styles.panel, { paddingBottom: bottomInset }]}
     >
       <Pressable
@@ -36,20 +51,30 @@ export function TonightDrawer({
         style={styles.handle}
       >
         <View style={styles.bar} />
-        <Chevron direction="down" />
       </Pressable>
 
       <View style={styles.titleRow}>
         <Text style={styles.title}>I aften</Text>
         {drinks.length > 0 && (
           <Text style={styles.total}>
-            {drinks.length} {genstandWord(drinks.length)} ·{" "}
-            {unitsX10Label(totalX10)} gs.
+            {drinks.length} {entryWord(drinks.length)} ·{" "}
+            {unitsX10Label(totalX10)} {genstandWord(totalX10 / 10)}
           </Text>
         )}
       </View>
 
-      <ScrollView style={styles.list} alwaysBounceVertical={false}>
+      <ScrollView
+        style={styles.list}
+        scrollEnabled={scrollable}
+        bounces={false}
+        overScrollMode="never"
+        scrollEventThrottle={16}
+        onScroll={(e) => {
+          scrollY.current = e.nativeEvent.contentOffset.y;
+        }}
+        onLayout={(e) => setListHeight(e.nativeEvent.layout.height)}
+        onContentSizeChange={(_w, h) => setContentHeight(h)}
+      >
         {drinks.length === 0 ? (
           <Text style={styles.empty}>Ingen genstande endnu.</Text>
         ) : (
@@ -92,9 +117,8 @@ const styles = StyleSheet.create({
   },
   handle: {
     alignItems: "center",
-    gap: 8,
     paddingTop: 10,
-    paddingBottom: 6,
+    paddingBottom: 12,
   },
   bar: {
     width: 36,

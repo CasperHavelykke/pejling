@@ -8,7 +8,7 @@ import {
   minutesToZero,
   type Body,
 } from "../widmark";
-import { da, hhmm, soberLine } from "../format";
+import { da, entryWord, genstandWord, hhmm, soberLine } from "../format";
 import { roastFor, ROASTS } from "../copy";
 import { ADVANCED_DRINKS, SIMPLE_DRINKS, drinkName } from "../drinks";
 
@@ -123,6 +123,13 @@ describe("format og tekster", () => {
   test("klokkeslæt med punktum", () => {
     const t = new Date(2026, 8, 26, 9, 6).getTime();
     expect(hhmm(t)).toBe("09.06");
+  });
+
+  test("indtastninger og genstande bøjes hver for sig", () => {
+    expect(entryWord(1)).toBe("indtastning");
+    expect(entryWord(3)).toBe("indtastninger");
+    expect(genstandWord(1)).toBe("genstand");
+    expect(genstandWord(2.5)).toBe("genstande");
   });
 
   test("ædru-linjen", () => {

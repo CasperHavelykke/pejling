@@ -2,6 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import {
   INFO_DISCLAIMER,
   INFO_EXPLANATION,
+  INFO_STORAGE,
   LEVEL_TABLE,
 } from "../domain/copy";
 import {
@@ -127,14 +128,16 @@ export function InfoSheet({
 
         <Text style={styles.disclaimer}>{INFO_DISCLAIMER}</Text>
 
+        <View style={styles.rule} />
+
+        <Text style={styles.heading}>Dine data</Text>
+        <Text style={styles.body}>{INFO_STORAGE}</Text>
+
         <Pressable
           onPress={onClose}
           accessibilityRole="button"
           hitSlop={{ top: 6, bottom: 6 }}
-          style={({ pressed }) => [
-            styles.ok,
-            pressed && { backgroundColor: colors.accentTint },
-          ]}
+          style={({ pressed }) => [styles.ok, pressed && styles.okPressed]}
         >
           <Text style={styles.okText}>Forstået</Text>
         </Pressable>
@@ -216,17 +219,23 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     color: colors.muted,
   },
+  // Samme udtryk som knapperne på hovedskærmen.
   ok: {
     alignSelf: "flex-start",
-    paddingVertical: 8,
-    paddingHorizontal: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
     borderWidth: 1,
-    borderColor: colors.accent,
-    borderRadius: radius.control,
+    borderColor: colors.btnBg,
+    borderRadius: radius.button,
+    backgroundColor: colors.btnBg,
+  },
+  okPressed: {
+    backgroundColor: colors.btnActive,
+    borderColor: colors.btnActive,
   },
   okText: {
     fontFamily: fonts.medium,
     fontSize: 14,
-    color: colors.accentText,
+    color: colors.btnFg,
   },
 });

@@ -14,6 +14,7 @@ import { AdvancedButtons, SimpleButtons } from "../components/DrinkButtons";
 import { InfoSheet } from "../components/InfoSheet";
 import { Owl } from "../components/Owl";
 import { Segmented } from "../components/Segmented";
+import { SpeechBubble } from "../components/SpeechBubble";
 import { TonightDrawer } from "../components/TonightDrawer";
 import { STATUS, roastFor } from "../domain/copy";
 import { da, hhmm, soberLine, unitsX10Label } from "../domain/format";
@@ -114,12 +115,7 @@ export default function PejlingScreen() {
           alwaysBounceVertical={false}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.bubble}>
-            <Text style={styles.bubbleText}>
-              {roastFor(p.level, p.tonight.length)}
-            </Text>
-            <View style={styles.bubbleTail} />
-          </View>
+          <SpeechBubble text={roastFor(p.level, p.tonight.length)} />
 
           <View style={{ marginTop: advanced ? 10 : 22 }}>
             <Owl t={p.t} scale={advanced ? 0.7 : 1.35} />
@@ -213,36 +209,6 @@ const styles = StyleSheet.create({
   },
   middle: { flex: 1 },
   middleContent: { flexGrow: 1, alignItems: "center" },
-  bubble: {
-    marginTop: 28,
-    maxWidth: 290,
-    backgroundColor: colors.surface,
-    borderRadius: radius.bubble,
-    borderWidth: 1,
-    borderColor: colors.ringSm,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
-  bubbleText: {
-    fontFamily: fonts.regular,
-    fontSize: 15,
-    lineHeight: 21,
-    textAlign: "center",
-    color: colors.text,
-  },
-  bubbleTail: {
-    position: "absolute",
-    left: "50%",
-    bottom: -6,
-    marginLeft: -5,
-    width: 10,
-    height: 10,
-    backgroundColor: colors.surface,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: colors.ringSm,
-    transform: [{ rotate: "45deg" }],
-  },
   numberBlock: { alignItems: "center", marginTop: 22, gap: 4 },
   number: {
     fontFamily: fonts.medium,

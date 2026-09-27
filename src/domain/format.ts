@@ -23,6 +23,12 @@ export function soberLine(minutes: number): string {
   return `Ædru om ca. ${h ? `${h} t ` : ""}${m} min`;
 }
 
+// En indtastning er ét tryk på en knap. Den kan fylde mere eller mindre
+// end én genstand, så de to ord må ikke blandes sammen.
+export function entryWord(count: number): string {
+  return count === 1 ? "indtastning" : "indtastninger";
+}
+
 export function genstandWord(count: number): string {
   return count === 1 ? "genstand" : "genstande";
 }

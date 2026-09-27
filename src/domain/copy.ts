@@ -64,4 +64,7 @@ export const INFO_EXPLANATION =
   "Tallet er et estimat af, hvor mange genstande der stadig er aktive i kroppen. Én genstand er 12 g alkohol. Kroppen forbrænder ca. 0,15 ‰ i timen, og din vægt og dit køn bestemmer, hvor meget én genstand fylder (Widmarks formel).";
 
 export const INFO_DISCLAIMER =
-  "Pejling er vejledende og kan ikke bruges til at vurdere, om du må køre. Intet sendes nogen steder – alt ligger på din telefon.";
+  "Pejling er vejledende og kan ikke bruges til at vurdere, om du må køre.";
+
+export const INFO_STORAGE =
+  "Alt gemmes kun på denne telefon, og intet sendes nogen steder. Sletter du appen, slettes dine indtastninger og indstillinger også og kan ikke hentes tilbage.";
