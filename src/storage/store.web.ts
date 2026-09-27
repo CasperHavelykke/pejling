@@ -2,6 +2,7 @@
 // udvikling. Samme funktioner som store.ts, men oven på localStorage.
 
 import type { DrinkLog } from "../domain/drinks";
+import type { Body } from "../domain/widmark";
 
 const DRINKS_KEY = "pejling.drinks";
 const SETTINGS_KEY = "pejling.settings";
@@ -26,6 +27,7 @@ function write(key: string, value: unknown): void {
 export async function loadDrinksSince(sinceMs: number): Promise<DrinkLog[]> {
   return read<DrinkLog[]>(DRINKS_KEY, [])
     .filter((d) => d.t >= sinceMs)
+    .map((d) => ({ ...d, weightKg: d.weightKg ?? null, sex: d.sex ?? null }))
     .sort((a, b) => a.t - b.t);
 }
 
@@ -33,12 +35,33 @@ export async function insertDrink(
   kind: string,
   unitsX10: number,
   t: number,
+  body: Body,
 ): Promise<DrinkLog> {
   const all = read<DrinkLog[]>(DRINKS_KEY, []);
   const id = all.reduce((max, d) => Math.max(max, d.id), 0) + 1;
-  const log: DrinkLog = { id, kind, unitsX10, t };
+  const log: DrinkLog = {
+    id,
+    kind,
+    unitsX10,
+    t,
+    weightKg: body.weightKg,
+    sex: body.sex,
+  };
   write(DRINKS_KEY, [...all, log]);
   return log;
+}
+
+export async function updateDrinkBodies(
+  ids: readonly number[],
+  body: Body,
+): Promise<void> {
+  const set = new Set(ids);
+  write(
+    DRINKS_KEY,
+    read<DrinkLog[]>(DRINKS_KEY, []).map((d) =>
+      set.has(d.id) ? { ...d, weightKg: body.weightKg, sex: body.sex } : d,
+    ),
+  );
 }
 
 export async function deleteDrink(id: number): Promise<void> {

@@ -1,13 +1,29 @@
 import Svg, { Path } from "react-native-svg";
 import { colors } from "../theme/tokens";
 
-// Lille pil til drawer-håndtaget.
-export function Chevron({ direction }: { direction: "up" | "down" }) {
+const PATHS = {
+  up: "M1 8 L8 1 L15 8",
+  down: "M1 1 L8 8 L15 1",
+  left: "M8 1 L1 8 L8 15",
+  right: "M1 1 L8 8 L1 15",
+} as const;
+
+// Lille pil til håndtag og navigation.
+export function Chevron({
+  direction,
+  color = colors.accentText,
+}: {
+  direction: keyof typeof PATHS;
+  color?: string;
+}) {
+  const vertical = direction === "up" || direction === "down";
+  const w = vertical ? 16 : 9;
+  const h = vertical ? 9 : 16;
   return (
-    <Svg width={16} height={9} viewBox="0 0 16 9" fill="none">
+    <Svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} fill="none">
       <Path
-        d={direction === "up" ? "M1 8 L8 1 L15 8" : "M1 1 L8 8 L15 1"}
-        stroke={colors.accentText}
+        d={PATHS[direction]}
+        stroke={color}
         strokeWidth={1.5}
         strokeLinecap="round"
         strokeLinejoin="round"

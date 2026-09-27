@@ -24,6 +24,8 @@ export const colors = {
   segOn: "#153f4a",
   segOnFg: "#7fe6f2",
   num: "#4fd8e8",
+  // Mørk tekst til lyse flader, fx de kraftigste felter i kalenderen.
+  inkOnLight: "#15112a",
   ringSm: "#3f424d",
   ringLg: "#9397ab",
   owlBody: "#5b3fb0",

@@ -19,6 +19,7 @@ import {
   loadDrinksSince,
   loadSettings,
   saveSetting,
+  updateDrinkBodies,
 } from "../storage/store";
 
 export type Mode = "simple" | "advanced";
@@ -40,6 +41,9 @@ export function usePejling() {
   // Skrivninger køres i rækkefølge, så fortryd aldrig overhaler tilføj.
   const queue = useRef<Promise<unknown>>(Promise.resolve());
   const realIds = useRef(new Map<number, number>());
+  // Nyeste værdier til de funktioner, der kun oprettes én gang.
+  const latest = useRef({ logs, weightKg, sex });
+  latest.current = { logs, weightKg, sex };
 
   useEffect(() => {
     let alive = true;
@@ -90,11 +94,41 @@ export function usePejling() {
     (def: DrinkDef) => {
       const t = Date.now();
       const id = tempId--;
-      setLogs((prev) => [...prev, { id, kind: def.kind, unitsX10: def.unitsX10, t }]);
+      const body: Body = {
+        weightKg: latest.current.weightKg,
+        sex: latest.current.sex,
+      };
+      setLogs((prev) => [
+        ...prev,
+        { id, kind: def.kind, unitsX10: def.unitsX10, t, ...body },
+      ]);
       setNow(t);
       enqueue(async () => {
-        const saved = await insertDrink(def.kind, def.unitsX10, t);
+        const saved = await insertDrink(def.kind, def.unitsX10, t, body);
         realIds.current.set(id, saved.id);
+      });
+    },
+    [enqueue],
+  );
+
+  // Ændres vægt eller køn midt på en aften, rettes aftenens indtastninger
+  // med, så tallet på skærmen og historikken er enige. Tidligere aftener
+  // beholder de værdier, de blev lavet med.
+  const restampTonight = useCallback(
+    (body: Body) => {
+      const ids = currentSession(latest.current.logs, Date.now(), body).map(
+        (l) => l.id,
+      );
+      if (ids.length === 0) return;
+      const set = new Set(ids);
+      setLogs((prev) =>
+        prev.map((l) => (set.has(l.id) ? { ...l, ...body } : l)),
+      );
+      enqueue(async () => {
+        const real = ids
+          .map((id) => (id < 0 ? realIds.current.get(id) : id))
+          .filter((id): id is number => id !== undefined);
+        await updateDrinkBodies(real, body);
       });
     },
     [enqueue],
@@ -117,16 +151,18 @@ export function usePejling() {
       const next = clampWeight(kg);
       setWeightKg(next);
       enqueue(() => saveSetting("weightKg", String(next)));
+      restampTonight({ weightKg: next, sex: latest.current.sex });
     },
-    [enqueue],
+    [enqueue, restampTonight],
   );
 
   const setSex = useCallback(
     (next: Sex) => {
       setSexState(next);
       enqueue(() => saveSetting("sex", next));
+      restampTonight({ weightKg: latest.current.weightKg, sex: next });
     },
-    [enqueue],
+    [enqueue, restampTonight],
   );
 
   const setMode = useCallback(

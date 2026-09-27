@@ -8,6 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Chevron } from "../components/Chevron";
 import { AdvancedButtons, SimpleButtons } from "../components/DrinkButtons";
@@ -165,6 +166,10 @@ export default function PejlingScreen() {
         soberLine={sober}
         bottomInset={Math.max(insets.bottom, 12) + 10}
         onUndo={p.remove}
+        onHistory={() => {
+          setDrawerOpen(false);
+          router.push("/historik");
+        }}
       />
 
       <InfoSheet

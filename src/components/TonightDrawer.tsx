@@ -18,6 +18,7 @@ export function TonightDrawer({
   soberLine,
   bottomInset,
   onUndo,
+  onHistory,
 }: {
   open: boolean;
   onClose: () => void;
@@ -27,6 +28,7 @@ export function TonightDrawer({
   soberLine: string;
   bottomInset: number;
   onUndo: (id: number) => void;
+  onHistory: () => void;
 }) {
   // Listen ruller kun, når den er længere end pladsen. Ellers ejer
   // trækket hele panelet. Er listen rullet ned, skal den rulle op igen,
@@ -102,7 +104,20 @@ export function TonightDrawer({
         )}
       </ScrollView>
 
-      <Text style={styles.sober}>{soberLine}</Text>
+      <View style={styles.footer}>
+        <Text style={styles.sober}>{soberLine}</Text>
+        <Pressable
+          onPress={onHistory}
+          accessibilityRole="link"
+          hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}
+          style={({ pressed }) => [
+            styles.history,
+            pressed && { backgroundColor: colors.accentTint },
+          ]}
+        >
+          <Text style={styles.historyText}>Tidligere aftener</Text>
+        </Pressable>
+      </View>
     </BottomPanel>
   );
 }
@@ -173,10 +188,28 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.accentText,
   },
+  footer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+    marginTop: 14,
+  },
   sober: {
+    flexShrink: 1,
     fontFamily: fonts.regular,
     fontSize: 13,
     color: colors.muted,
-    marginTop: 14,
+  },
+  history: {
+    paddingVertical: 4,
+    paddingHorizontal: 6,
+    marginRight: -6,
+    borderRadius: radius.ghost,
+  },
+  historyText: {
+    fontFamily: fonts.regular,
+    fontSize: 13,
+    color: colors.accentText,
   },
 });

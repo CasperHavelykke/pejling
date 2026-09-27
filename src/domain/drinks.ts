@@ -98,11 +98,16 @@ export function drinkName(kind: string): string {
   return BY_KIND.get(kind)?.name ?? kind;
 }
 
-// Et logget indtag, som det ligger i databasen.
+// En indtastning, som den ligger i databasen.
 export type DrinkLog = {
   id: number;
   kind: string;
   unitsX10: number;
   // Tidspunkt i ms siden epoch.
   t: number;
+  // Vægt og køn, da indtastningen blev lavet. Gamle aftener ændrer sig
+  // derfor ikke, når man senere retter sine indstillinger. Mangler på
+  // rækker fra før feltet fandtes.
+  weightKg: number | null;
+  sex: "m" | "f" | null;
 };
