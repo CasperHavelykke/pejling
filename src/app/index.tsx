@@ -18,7 +18,7 @@ import { Segmented } from "../components/Segmented";
 import { SpeechBubble } from "../components/SpeechBubble";
 import { TonightDrawer } from "../components/TonightDrawer";
 import { STATUS, roastFor } from "../domain/copy";
-import { da, hhmm, soberLine, unitsX10Label } from "../domain/format";
+import { daWhole, hhmm, soberLine, unitsX10Label } from "../domain/format";
 import { usePejling, type Mode } from "../state/usePejling";
 import { mixOklch } from "../theme/color";
 import { colors, fonts, radius, space } from "../theme/tokens";
@@ -125,9 +125,9 @@ export default function PejlingScreen() {
           <View style={styles.numberBlock}>
             <Text
               style={styles.number}
-              accessibilityLabel={`${da(p.active)} aktive genstande`}
+              accessibilityLabel={`${daWhole(p.active)} aktive genstande`}
             >
-              {da(p.active)}
+              {daWhole(p.active)}
             </Text>
             <Text style={styles.numberLabel}>aktive genstande</Text>
             <Text style={styles.status}>{STATUS[p.level]}</Text>

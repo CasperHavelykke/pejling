@@ -8,7 +8,7 @@ import {
   minutesToZero,
   type Body,
 } from "../widmark";
-import { da, entryWord, genstandWord, hhmm, soberLine } from "../format";
+import { da, daWhole, entryWord, genstandWord, hhmm, soberLine } from "../format";
 import { roastFor, ROASTS } from "../copy";
 import { ADVANCED_DRINKS, SIMPLE_DRINKS, drinkName } from "../drinks";
 
@@ -118,6 +118,15 @@ describe("format og tekster", () => {
   test("dansk decimalkomma", () => {
     expect(da(2.5)).toBe("2,5");
     expect(da(2)).toBe("2,0");
+  });
+
+  test("hele tal vises uden decimal", () => {
+    expect(daWhole(0)).toBe("0");
+    expect(daWhole(2)).toBe("2");
+    expect(daWhole(2.04)).toBe("2");
+    expect(daWhole(1.96)).toBe("2");
+    expect(daWhole(2.06)).toBe("2,1");
+    expect(daWhole(12.5)).toBe("12,5");
   });
 
   test("klokkeslæt med punktum", () => {

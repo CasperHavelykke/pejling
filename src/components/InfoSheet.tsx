@@ -1,4 +1,5 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import Svg, { Path } from "react-native-svg";
 import {
   INFO_DISCLAIMER,
   INFO_EXPLANATION,
@@ -132,16 +133,28 @@ export function InfoSheet({
 
         <Text style={styles.heading}>Dine data</Text>
         <Text style={styles.body}>{INFO_STORAGE}</Text>
-
-        <Pressable
-          onPress={onClose}
-          accessibilityRole="button"
-          hitSlop={{ top: 6, bottom: 6 }}
-          style={({ pressed }) => [styles.ok, pressed && styles.okPressed]}
-        >
-          <Text style={styles.okText}>Forstået</Text>
-        </Pressable>
       </ScrollView>
+
+      {/* Ligger uden for rullefeltet, så krydset altid kan nås. */}
+      <Pressable
+        onPress={onClose}
+        accessibilityRole="button"
+        accessibilityLabel="Luk"
+        hitSlop={6}
+        style={({ pressed }) => [
+          styles.close,
+          pressed && { backgroundColor: colors.pressTint },
+        ]}
+      >
+        <Svg width={14} height={14} viewBox="0 0 14 14" fill="none">
+          <Path
+            d="M2 2 L12 12 M12 2 L2 12"
+            stroke={colors.text}
+            strokeWidth={1.5}
+            strokeLinecap="round"
+          />
+        </Svg>
+      </Pressable>
     </BottomPanel>
   );
 }
@@ -219,23 +232,14 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     color: colors.muted,
   },
-  // Samme udtryk som knapperne på hovedskærmen.
-  ok: {
-    alignSelf: "flex-start",
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderWidth: 1,
-    borderColor: colors.btnBg,
-    borderRadius: radius.button,
-    backgroundColor: colors.btnBg,
-  },
-  okPressed: {
-    backgroundColor: colors.btnActive,
-    borderColor: colors.btnActive,
-  },
-  okText: {
-    fontFamily: fonts.medium,
-    fontSize: 14,
-    color: colors.btnFg,
+  close: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

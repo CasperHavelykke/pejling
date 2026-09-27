@@ -22,7 +22,7 @@ import {
 import { LEVEL_TABLE } from "../domain/copy";
 import { drinkName, type DrinkLog } from "../domain/drinks";
 import {
-  da,
+  daWhole,
   genstandWord,
   hhmm,
   unitsX10Label,
@@ -364,7 +364,7 @@ function DayDetail({ day }: { day: DaySummary }) {
         />
         <Stat
           label="Maks aktive"
-          value={da(day.peakActive)}
+          value={daWhole(day.peakActive)}
           swatch={step.fill}
           note={levelName(day.peakLevel)}
         />

@@ -11,7 +11,7 @@ export const STATUS: readonly string[] = [
 
 export const ROASTS: readonly (readonly string[])[] = [
   [
-    "Ædru på en bytur? Modigt valg. Eller bare kedeligt.",
+    "Ædru på en bytur? Modigt valg.",
     "Nul genstande. Du er designated driver, eller også har du ingen venner her.",
     "Du står med en danskvand og siger “jeg skal tidligt op”. Alle ved, du lyver.",
   ],

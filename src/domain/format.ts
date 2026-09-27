@@ -3,6 +3,13 @@ export function da(n: number, decimals = 1): string {
   return n.toFixed(decimals).replace(".", ",");
 }
 
+// Aktive genstande: én decimal, men hele tal vises uden ",0".
+// 2,04 bliver "2", og 2,06 bliver "2,1".
+export function daWhole(n: number): string {
+  const rounded = Math.round(n * 10) / 10;
+  return Number.isInteger(rounded) ? String(rounded) : da(rounded);
+}
+
 export function unitsX10Label(x10: number): string {
   return da(x10 / 10);
 }
