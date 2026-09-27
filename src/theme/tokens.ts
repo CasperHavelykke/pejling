@@ -1,0 +1,56 @@
+import { Platform } from "react-native";
+
+// Design tokens: palet "neon", mørk tilstand.
+export const colors = {
+  bg: "#14142e",
+  red: "#7a1a2a",
+  surface: "#232532",
+  text: "#e9e9ed",
+  muted: "#9397ab",
+  divider: "rgba(233,233,237,0.16)",
+  pressTint: "rgba(233,233,237,0.07)",
+  backdrop: "rgba(20,20,46,0.6)",
+  accent: "#9b6cf5",
+  accentText: "#b899ff",
+  accentTint: "rgba(155,108,245,0.14)",
+  btnBg: "#9b6cf5",
+  btnFg: "#15112a",
+  btnActive: "#7c4fe0",
+  btnSub: "rgba(21,17,42,0.7)",
+  segOn: "#153f4a",
+  segOnFg: "#7fe6f2",
+  num: "#4fd8e8",
+  ringSm: "#3f424d",
+  ringLg: "#9397ab",
+  owlBody: "#5b3fb0",
+  owlBelly: "#7f5fe0",
+  owlEye: "#f3f5fe",
+  owlPupil: "#292b31",
+  owlBeak: "#4fd8e8",
+  owlCheek: "#e0526a",
+} as const;
+
+// Inter i to vægte. Aldrig federe end 500.
+export const fonts = {
+  regular: "Inter_400Regular",
+  medium: "Inter_500Medium",
+  serifItalic: Platform.select({
+    ios: "Georgia",
+    android: "serif",
+    default: "Georgia, serif",
+  }),
+} as const;
+
+export const radius = {
+  pill: 999,
+  drawer: 16,
+  sheet: 14,
+  button: 12,
+  bubble: 10,
+  control: 8,
+  ghost: 6,
+} as const;
+
+export const space = {
+  side: 20,
+} as const;
