@@ -135,7 +135,9 @@ export default function PejlingScreen() {
 
           <View style={styles.spacer} />
 
-          <Text style={styles.sober}>{sober}</Text>
+          {/* Tom ved nul, men linjen beholder sin plads, så knapperne
+              ikke flytter sig ved første tryk. */}
+          <Text style={styles.sober}>{sober || " "}</Text>
         </ScrollView>
 
         {advanced ? (

@@ -141,10 +141,16 @@ describe("format og tekster", () => {
     expect(genstandWord(2.5)).toBe("genstande");
   });
 
-  test("ædru-linjen", () => {
-    expect(soberLine(0)).toBe("Ingen aktiv alkohol i kroppen.");
-    expect(soberLine(45)).toBe("Ædru om ca. 45 min");
-    expect(soberLine(130)).toBe("Ædru om ca. 2 t 10 min");
+  test("linjen om tid til nul lover ikke, at man er ædru", () => {
+    for (const m of [0, 45, 130]) {
+      expect(soberLine(m).toLowerCase()).not.toContain("ædru");
+    }
+  });
+
+  test("linjen om tid til nul", () => {
+    expect(soberLine(0)).toBe("");
+    expect(soberLine(45)).toBe("Nul aktive genstande om ca. 45 min");
+    expect(soberLine(130)).toBe("Nul aktive genstande om ca. 2 t 10 min");
   });
 
   test("roast skifter med antal og holder sig i niveauets liste", () => {

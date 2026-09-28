@@ -1,7 +1,7 @@
 // Tekster pr. niveau (0-5). Status-linjen er informativ; uglen håner.
 
 export const STATUS: readonly string[] = [
-  "Ædru – ingen alkohol i kroppen",
+  "Ingen aktive genstande",
   "Let påvirket – reaktionstiden er allerede lidt længere",
   "Påvirket – hæmningerne falder, og det gør dømmekraften også",
   "Tydeligt fuld – balance og koordination svigter herfra",
@@ -64,7 +64,7 @@ export const INFO_EXPLANATION =
   "Tallet er et estimat af, hvor mange genstande der stadig er aktive i kroppen. Én genstand er 12 g alkohol. Kroppen forbrænder ca. 0,15 ‰ i timen, og din vægt og dit køn bestemmer, hvor meget én genstand fylder (Widmarks formel).";
 
 export const INFO_DISCLAIMER =
-  "Pejling er vejledende og kan ikke bruges til at vurdere, om du må køre.";
+  "Pejling er vejledende og kan ikke bruges til at vurdere, om du må køre. Nul aktive genstande betyder ikke, at du er klar til at køre. Forbrændingen varierer fra person til person.";
 
 export const INFO_STORAGE =
   "Alt gemmes kun på denne telefon, og intet sendes nogen steder. Sletter du appen, slettes dine indtastninger og indstillinger også og kan ikke hentes tilbage.";

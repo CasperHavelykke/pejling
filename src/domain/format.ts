@@ -23,11 +23,14 @@ export function hhmm(t: number): string {
   return `${h}.${m}`;
 }
 
+// Linjen taler om tallet på skærmen og ikke om personen. Ordet "ædru"
+// undgås bevidst: det kan læses som et løfte om at være klar til at køre.
+// Ved nul er linjen tom, for statuslinjen siger allerede det samme.
 export function soberLine(minutes: number): string {
-  if (minutes <= 0) return "Ingen aktiv alkohol i kroppen.";
+  if (minutes <= 0) return "";
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
-  return `Ædru om ca. ${h ? `${h} t ` : ""}${m} min`;
+  return `Nul aktive genstande om ca. ${h ? `${h} t ` : ""}${m} min`;
 }
 
 // En indtastning er ét tryk på en knap. Den kan fylde mere eller mindre
