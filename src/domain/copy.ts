@@ -1,5 +1,8 @@
 // Tekster pr. niveau (0-5). Status-linjen er informativ; uglen håner.
 
+import { da } from "./format";
+import { burnUnitsPerHour, levelThresholds, type Body } from "./widmark";
+
 export const STATUS: readonly string[] = [
   "Ingen aktive genstande",
   "Let påvirket – reaktionstiden er allerede lidt længere",
@@ -10,10 +13,12 @@ export const STATUS: readonly string[] = [
 ];
 
 export const ROASTS: readonly (readonly string[])[] = [
+  // Ved nul må uglen aldrig håne den, der ikke drikker, eller lægge op
+  // til at gå i gang. Brodden vender mod de andre i baren.
   [
-    "Ædru på en bytur? Modigt valg.",
-    "Nul genstande. Du er designated driver, eller også har du ingen venner her.",
-    "Du står med en danskvand og siger “jeg skal tidligt op”. Alle ved, du lyver.",
+    "Du er den eneste her, der kan huske aftenen i morgen.",
+    "Nul genstande. Jeg dømmer de andre imens.",
+    "Chaufføren er aftenens eneste voksne.",
   ],
   [
     "Én genstand, og du føler dig allerede sjov. Det er du ikke.",
@@ -52,16 +57,29 @@ export function roastFor(level: number, drinkCount: number): string {
   return list[(drinkCount + level) % list.length];
 }
 
-export const LEVEL_TABLE: readonly (readonly [string, string])[] = [
-  ["0–0,4 ‰", "Let påvirket"],
-  ["0,4–0,8 ‰", "Påvirket"],
-  ["0,8–1,2 ‰", "Tydeligt fuld"],
-  ["1,2–1,8 ‰", "Meget fuld"],
-  ["> 1,8 ‰", "Tag hjem"],
+// Navne på niveau 1-5.
+export const LEVEL_NAMES: readonly string[] = [
+  "Let påvirket",
+  "Påvirket",
+  "Tydeligt fuld",
+  "Meget fuld",
+  "Tag hjem",
 ];
 
-export const INFO_EXPLANATION =
-  "Tallet er et estimat af, hvor mange genstande der stadig er aktive i kroppen. Én genstand er 12 g alkohol. Kroppen forbrænder ca. 0,15 ‰ i timen, og din vægt og dit køn bestemmer, hvor meget én genstand fylder (Widmarks formel).";
+// Tabellen i info-arket. Grænserne vises som aktive genstande for brugerens
+// egen vægt og køn. Appen viser aldrig promille.
+export function levelRows(body: Body): (readonly [string, string])[] {
+  const t = levelThresholds(body).map((n) => da(n));
+  return LEVEL_NAMES.map((name, i) => {
+    if (i === 0) return [`Op til ${t[0]}`, name] as const;
+    if (i === LEVEL_NAMES.length - 1) return [`Over ${t[i - 1]}`, name] as const;
+    return [`${t[i - 1]}–${t[i]}`, name] as const;
+  });
+}
+
+export function infoExplanation(body: Body): string {
+  return `Tallet er et estimat af, hvor mange genstande der stadig er aktive i kroppen. Én genstand er 12 g alkohol. Med din vægt og dit køn forbrænder du ca. ${da(burnUnitsPerHour(body))} genstande i timen.`;
+}
 
 export const INFO_DISCLAIMER =
   "Pejling er vejledende og kan ikke bruges til at vurdere, om du må køre. Nul aktive genstande betyder ikke, at du er klar til at køre. Forbrændingen varierer fra person til person.";

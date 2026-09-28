@@ -19,7 +19,7 @@ import {
   monthTitle,
   type YearMonth,
 } from "../domain/calendar";
-import { LEVEL_TABLE } from "../domain/copy";
+import { LEVEL_NAMES } from "../domain/copy";
 import { drinkName, type DrinkLog } from "../domain/drinks";
 import {
   daWhole,
@@ -55,7 +55,7 @@ function stepFor(level: number) {
 }
 
 function levelName(level: number): string {
-  return LEVEL_TABLE[Math.min(LEVEL_TABLE.length, Math.max(1, level)) - 1][1];
+  return LEVEL_NAMES[Math.min(LEVEL_NAMES.length, Math.max(1, level)) - 1];
 }
 
 function thisMonth(): YearMonth {

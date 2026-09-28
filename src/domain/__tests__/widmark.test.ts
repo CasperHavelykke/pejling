@@ -1,6 +1,8 @@
 import {
   activeUnits,
   bacAt,
+  burnUnitsPerHour,
+  levelThresholds,
   clampWeight,
   currentSession,
   drunkenness,
@@ -9,7 +11,7 @@ import {
   type Body,
 } from "../widmark";
 import { da, daWhole, entryWord, genstandWord, hhmm, soberLine } from "../format";
-import { roastFor, ROASTS } from "../copy";
+import { infoExplanation, levelRows, roastFor, ROASTS } from "../copy";
 import { ADVANCED_DRINKS, SIMPLE_DRINKS, drinkName } from "../drinks";
 
 const H = 3_600_000;
@@ -84,6 +86,46 @@ describe("niveauer", () => {
   test("minutter til nul", () => {
     expect(minutesToZero(0.15)).toBe(60);
     expect(minutesToZero(0)).toBe(0);
+  });
+});
+
+describe("niveauer vist som aktive genstande", () => {
+  test("grænserne for en mand på 80 kg", () => {
+    expect(levelRows(man80)).toEqual([
+      ["Op til 1,8", "Let påvirket"],
+      ["1,8–3,6", "Påvirket"],
+      ["3,6–5,4", "Tydeligt fuld"],
+      ["5,4–8,2", "Meget fuld"],
+      ["Over 8,2", "Tag hjem"],
+    ]);
+  });
+
+  test("en lettere krop har lavere grænser", () => {
+    expect(levelRows(woman60)[0][0]).toBe("Op til 1,1");
+    expect(levelRows(woman60)[4][0]).toBe("Over 5,0");
+  });
+
+  test("grænserne passer med det niveau, beregningen giver", () => {
+    for (const body of [man80, woman60]) {
+      levelThresholds(body).forEach((units, i) => {
+        const bac = (units * 12) / (body.weightKg * (body.sex === "f" ? 0.55 : 0.68));
+        expect(levelIndex(bac - 0.001)).toBe(i + 1);
+        expect(levelIndex(bac + 0.001)).toBe(i + 2);
+      });
+    }
+  });
+
+  test("forbrænding i genstande pr. time", () => {
+    expect(burnUnitsPerHour(man80)).toBeCloseTo(0.68, 6);
+    expect(infoExplanation(man80)).toContain("ca. 0,7 genstande i timen");
+  });
+
+  test("brugeren får aldrig vist promille", () => {
+    const shown = [
+      infoExplanation(man80),
+      ...levelRows(man80).flat(),
+    ].join(" ");
+    expect(shown).not.toMatch(/‰|promille|Widmark/i);
   });
 });
 

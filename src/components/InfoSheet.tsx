@@ -2,13 +2,14 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import {
   INFO_DISCLAIMER,
-  INFO_EXPLANATION,
+  infoExplanation,
   INFO_STORAGE,
-  LEVEL_TABLE,
+  levelRows,
 } from "../domain/copy";
 import {
   MAX_WEIGHT_KG,
   MIN_WEIGHT_KG,
+  type Body,
   type Sex,
 } from "../domain/widmark";
 import { colors, fonts, radius } from "../theme/tokens";
@@ -67,6 +68,8 @@ export function InfoSheet({
   onWeight: (kg: number) => void;
   onSex: (sex: Sex) => void;
 }) {
+  const body: Body = { weightKg, sex };
+
   return (
     <BottomPanel
       open={open}
@@ -116,10 +119,13 @@ export function InfoSheet({
         <View style={styles.rule} />
 
         <Text style={styles.heading}>Sådan regner Pejling</Text>
-        <Text style={styles.body}>{INFO_EXPLANATION}</Text>
+        <Text style={styles.body}>{infoExplanation(body)}</Text>
 
         <View style={styles.table}>
-          {LEVEL_TABLE.map(([range, label]) => (
+          <Text style={[styles.tableText, styles.tableHead]}>
+            Aktive genstande
+          </Text>
+          {levelRows(body).map(([range, label]) => (
             <View key={range} style={styles.tableRow}>
               <Text style={[styles.tableText, styles.tableRange]}>{range}</Text>
               <Text style={styles.tableText}>{label}</Text>
@@ -220,7 +226,8 @@ const styles = StyleSheet.create({
   },
   table: { gap: 4 },
   tableRow: { flexDirection: "row", gap: 14 },
-  tableRange: { width: 76 },
+  tableRange: { width: 76, fontVariant: ["tabular-nums"] },
+  tableHead: { fontSize: 11, marginBottom: 2 },
   tableText: {
     fontFamily: fonts.regular,
     fontSize: 13,

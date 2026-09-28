@@ -71,8 +71,20 @@ export function drunkenness(bac: number): number {
   return Math.min(1, Math.max(0, bac / 2));
 }
 
-// Niveau 0-5. Grænserne er promille.
+// Niveau 0-5. Grænserne er promille og bruges kun i beregningen. Brugeren
+// får dem altid vist som aktive genstande, se levelThresholds.
 const LEVEL_MAX = [ZERO_BAC, 0.4, 0.8, 1.2, 1.8] as const;
+
+// Grænserne mellem niveau 1-5 regnet om til aktive genstande for netop
+// denne krop. Fire tal: hvor niveau 2, 3, 4 og 5 begynder.
+export function levelThresholds(body: Body): number[] {
+  return LEVEL_MAX.slice(1).map((bac) => activeUnits(bac, body));
+}
+
+// Hvor mange genstande kroppen forbrænder i timen.
+export function burnUnitsPerHour(body: Body): number {
+  return activeUnits(BURN_PER_HOUR, body);
+}
 
 export function levelIndex(bac: number): number {
   const i = LEVEL_MAX.findIndex((max) => bac < max);
