@@ -81,6 +81,11 @@ export function infoExplanation(body: Body): string {
   return `Tallet er et estimat af, hvor mange genstande der stadig er aktive i kroppen. Én genstand er 12 g alkohol. Med din vægt og dit køn forbrænder du ca. ${da(burnUnitsPerHour(body))} genstande i timen.`;
 }
 
+// Indholdet af det, man drikker, er en fejlkilde for sig, ved siden af
+// kroppens forbrænding.
+export const INFO_DRINKS =
+  "Knapperne regner med typiske størrelser og styrker. En stærk øl, en stor fadøl eller en drink med ekstra sprut indeholder mere, end knappen tæller. Brug Avanceret, hvis du vil ramme tættere.";
+
 export const INFO_DISCLAIMER =
   "Pejling er vejledende og kan ikke bruges til at vurdere, om du må køre. Nul aktive genstande betyder ikke, at du er klar til at køre. Forbrændingen varierer fra person til person.";
 

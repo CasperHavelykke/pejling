@@ -2,6 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import {
   INFO_DISCLAIMER,
+  INFO_DRINKS,
   infoExplanation,
   INFO_STORAGE,
   levelRows,
@@ -120,6 +121,7 @@ export function InfoSheet({
 
         <Text style={styles.heading}>Sådan regner Pejling</Text>
         <Text style={styles.body}>{infoExplanation(body)}</Text>
+        <Text style={styles.body}>{INFO_DRINKS}</Text>
 
         <View style={styles.table}>
           <Text style={[styles.tableText, styles.tableHead]}>
