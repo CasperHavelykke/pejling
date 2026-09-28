@@ -10,7 +10,10 @@
     "backgroundColor": "#14142e",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "dk.pejlingapp.pejling"
+      "bundleIdentifier": "dk.pejlingapp.pejling",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "dk.pejlingapp.pejling",
@@ -37,6 +40,13 @@
         }
       ],
       "expo-sqlite"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "6dc9adbe-a33e-4115-8b43-a82d5e0e534b"
+      }
+    },
+    "owner": "casperhavelykke"
   }
 }
