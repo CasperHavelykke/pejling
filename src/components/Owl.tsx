@@ -11,6 +11,15 @@ const W = 120;
 const H = 130;
 const EYE = 38;
 
+// Ørerne er trekanter, der stikker op bag kroppen. Foden af hver trekant
+// ligger inde under kroppen, så kun spidsen ses.
+const EAR_LEFT = "M9,42 L13,3 L42,17 Z";
+const EAR_RIGHT = "M111,42 L107,3 L78,17 Z";
+
+// Øjets farve: hvidt, når uglen er ædru, og gradvist mere rødsprængt.
+const EYE_CLEAR = "rgb(243, 245, 254)";
+const EYE_RED = "rgb(240, 158, 168)";
+
 // Kroppen: bred, rund top og lidt fladere bund.
 const BODY_PATH =
   "M0,76 A60,66 0 0 1 60,10 A60,66 0 0 1 120,76 A55.2,54 0 0 1 64.8,130 L55.2,130 A55.2,54 0 0 1 0,76 Z";
@@ -40,7 +49,18 @@ function Eye({
   dy: number;
 }) {
   return (
-    <View style={[styles.eye, side === "left" ? { left: 18 } : { right: 18 }]}>
+    <Animated.View
+      style={[
+        styles.eye,
+        side === "left" ? { left: 18 } : { right: 18 },
+        {
+          backgroundColor: t.interpolate({
+            inputRange: [0, 1],
+            outputRange: [EYE_CLEAR, EYE_RED],
+          }),
+        },
+      ]}
+    >
       <Animated.View
         style={[
           styles.pupil,
@@ -58,12 +78,12 @@ function Eye({
           {
             height: t.interpolate({
               inputRange: [0, 1],
-              outputRange: [0, EYE * 0.55],
+              outputRange: [0, EYE * 0.62],
             }),
           },
         ]}
       />
-    </View>
+    </Animated.View>
   );
 }
 
@@ -102,9 +122,22 @@ export function Owl({ t, scale }: { t: number; scale: number }) {
           ],
         }}
       >
-        <View style={[styles.ear, { left: 14 }]} />
-        <View style={[styles.ear, { right: 14 }]} />
         <Svg width={W} height={H} style={StyleSheet.absoluteFill}>
+          {/* Stregen i samme farve runder trekanternes spidser en smule. */}
+          <Path
+            d={EAR_LEFT}
+            fill={colors.owlBody}
+            stroke={colors.owlBody}
+            strokeWidth={4}
+            strokeLinejoin="round"
+          />
+          <Path
+            d={EAR_RIGHT}
+            fill={colors.owlBody}
+            stroke={colors.owlBody}
+            strokeWidth={4}
+            strokeLinejoin="round"
+          />
           <Path d={BODY_PATH} fill={colors.owlBody} />
           <Ellipse cx={60} cy={94} rx={30} ry={26} fill={colors.owlBelly} />
         </Svg>
@@ -127,22 +160,12 @@ export function Owl({ t, scale }: { t: number; scale: number }) {
 }
 
 const styles = StyleSheet.create({
-  ear: {
-    position: "absolute",
-    top: 2,
-    width: 22,
-    height: 22,
-    borderRadius: 3,
-    backgroundColor: colors.owlBody,
-    transform: [{ rotate: "45deg" }],
-  },
   eye: {
     position: "absolute",
     top: 28,
     width: EYE,
     height: EYE,
     borderRadius: EYE / 2,
-    backgroundColor: colors.owlEye,
     overflow: "hidden",
   },
   pupil: {
@@ -156,12 +179,13 @@ const styles = StyleSheet.create({
   },
   lid: {
     position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
+    // Et punkt ud over øjets kant, så der ikke står en tynd lys streg
+    // tilbage langs den runde kant.
+    left: -1,
+    right: -1,
+    top: -1,
+    // Lige underkant hele vejen ned. Øjets runde form klipper siderne.
     backgroundColor: colors.owlBody,
-    borderBottomLeftRadius: EYE / 2,
-    borderBottomRightRadius: EYE / 2,
   },
   beak: {
     position: "absolute",
