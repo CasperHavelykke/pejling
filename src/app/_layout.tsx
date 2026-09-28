@@ -1,3 +1,4 @@
+import { BricolageGrotesque_600SemiBold } from "@expo-google-fonts/bricolage-grotesque/600SemiBold";
 import {
   Inter_400Regular,
   Inter_500Medium,
@@ -13,7 +14,11 @@ import { colors } from "../theme/tokens";
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({ Inter_400Regular, Inter_500Medium });
+  const [loaded, error] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    BricolageGrotesque_600SemiBold,
+  });
 
   useEffect(() => {
     // Fejler skrifttypen, vises appen med systemets skrift frem for at

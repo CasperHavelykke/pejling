@@ -194,9 +194,9 @@ const styles = StyleSheet.create({
   topSide: { flex: 1 },
   topRight: { alignItems: "flex-end" },
   brand: {
-    fontFamily: fonts.medium,
-    fontSize: 18,
-    letterSpacing: -0.18,
+    fontFamily: fonts.wordmark,
+    fontSize: 20,
+    letterSpacing: -0.2,
     color: colors.text,
   },
   info: {
