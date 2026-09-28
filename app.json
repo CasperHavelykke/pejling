@@ -9,9 +9,11 @@
     "userInterfaceStyle": "dark",
     "backgroundColor": "#14142e",
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "dk.pejlingapp.pejling"
     },
     "android": {
+      "package": "dk.pejlingapp.pejling",
       "adaptiveIcon": {
         "backgroundColor": "#7c55d3",
         "backgroundImage": "./assets/android-icon-background.png",
