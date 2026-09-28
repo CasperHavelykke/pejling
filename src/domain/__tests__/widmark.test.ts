@@ -96,11 +96,20 @@ describe("currentSession", () => {
     expect(currentSession(logs, T0 + 2 * H, man80)).toHaveLength(2);
   });
 
-  test("ryddes når kroppen har været i nul i over 8 timer", () => {
+  test("ryddes når kroppen har været i nul i over 3 timer", () => {
     const logs = [{ unitsX10: 10, t: T0 }];
     const zeroAfterMs = (12 / (80 * 0.68) / 0.15) * H;
-    expect(currentSession(logs, T0 + zeroAfterMs + 7 * H, man80)).toHaveLength(1);
-    expect(currentSession(logs, T0 + zeroAfterMs + 9 * H, man80)).toHaveLength(0);
+    expect(currentSession(logs, T0 + zeroAfterMs + 2.9 * H, man80)).toHaveLength(1);
+    expect(currentSession(logs, T0 + zeroAfterMs + 3.1 * H, man80)).toHaveLength(0);
+  });
+
+  test("en øl til maden og en senere samme aften hænger sammen", () => {
+    // Én genstand kl. 18 er forbrændt ca. 19.30. Næste kommer kl. 21.
+    const logs = [
+      { unitsX10: 10, t: T0 },
+      { unitsX10: 10, t: T0 + 3 * H },
+    ];
+    expect(currentSession(logs, T0 + 3 * H, man80)).toHaveLength(2);
   });
 
   test("gårsdagens indtag følger ikke med ind i en ny aften", () => {

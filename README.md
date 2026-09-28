@@ -41,7 +41,7 @@ Scan QR-koden med Expo Go på telefonen, eller tryk `w` for at åbne i browseren
 
 Én genstand er 12 g alkohol. Promillen estimeres med Widmarks formel ud fra vægt og køn, og kroppen forbrænder ca. 0,15 promille i timen. Aktive genstande er promillen regnet tilbage til genstande.
 
-En aften ryddes af sig selv, når kroppen har været i nul i mere end 8 timer. Indtastningerne bliver liggende i databasen og vises i historikken.
+En aften ryddes af sig selv, når kroppen har været i nul i mere end 3 timer. Indtastningerne bliver liggende i databasen og vises i historikken.
 
 ## Historik
 

@@ -10,8 +10,11 @@ export const BURN_PER_HOUR = 0.15;
 export const DEFAULT_WEIGHT_KG = 80;
 export const MIN_WEIGHT_KG = 35;
 export const MAX_WEIGHT_KG = 150;
-// Aftenen ryddes, når kroppen har været i nul så længe.
-export const SESSION_GAP_MS = 8 * 3_600_000;
+// Aftenen ryddes, når kroppen har været i nul så længe. Tre timer er
+// kort nok til, at gårsdagens liste er væk næste formiddag, og langt nok
+// til, at en øl til maden og en bytur senere er samme aften.
+export const SESSION_GAP_HOURS = 3;
+export const SESSION_GAP_MS = SESSION_GAP_HOURS * 3_600_000;
 
 const MS_PER_HOUR = 3_600_000;
 // Under denne grænse regnes kroppen som i nul.
@@ -77,8 +80,8 @@ export function levelIndex(bac: number): number {
 }
 
 // "I aften": den seneste sammenhængende aften. En ny aften begynder, når
-// kroppen har været i nul i mere end 8 timer før næste indtag. Er der gået
-// mere end 8 timer i nul siden sidste aften, er listen tom.
+// kroppen har været i nul i mere end SESSION_GAP_HOURS før næste indtag.
+// Er der gået længere tid i nul siden sidste aften, er listen tom.
 export function currentSession<T extends Timed>(
   logs: readonly T[],
   nowMs: number,
