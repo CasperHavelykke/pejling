@@ -6,8 +6,7 @@ export const colors = {
   red: "#7a1a2a",
   surface: "#232532",
   text: "#e9e9ed",
-  // TEST: gennemsigtig hvid, så den dæmpede tekst tager farve efter
-  // baggrunden. Designets værdi er "#9397ab".
+  // Gennemsigtig hvid, så den dæmpede tekst tager farve efter baggrunden.
   muted: "rgba(255,255,255,0.6)",
   divider: "rgba(233,233,237,0.16)",
   pressTint: "rgba(233,233,237,0.07)",
@@ -16,8 +15,7 @@ export const colors = {
   accentText: "#b899ff",
   accentTint: "rgba(155,108,245,0.14)",
   btnBg: "#9b6cf5",
-  // TEST: hvid tekst og ikoner på knapperne. Designets værdier er
-  // btnFg "#15112a" og btnSub "rgba(21,17,42,0.7)".
+  // Hvid tekst og ikoner på knapperne.
   btnFg: "#ffffff",
   btnActive: "#7c4fe0",
   btnSub: "rgba(255,255,255,0.8)",
