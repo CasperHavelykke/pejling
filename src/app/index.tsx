@@ -122,8 +122,7 @@ export default function PejlingScreen() {
           />
 
           {/* I Avanceret fylder knapperne tre rækker. Ugle og luft er gjort
-              mindre, så linjen over knapperne ikke bliver skåret af på
-              små skærme. */}
+              mindre, så statuslinjen ikke bliver skåret af på små skærme. */}
           <View style={{ marginTop: advanced ? 6 : 22 }}>
             <Owl t={p.t} scale={advanced ? 0.6 : 1.35} />
           </View>
@@ -131,19 +130,16 @@ export default function PejlingScreen() {
           <View style={[styles.numberBlock, advanced && { marginTop: 12 }]}>
             <Text
               style={styles.number}
-              accessibilityLabel={`${daWhole(p.active)} aktive genstande`}
+              accessibilityLabel={`${daWhole(p.active)} aktive genstande i kroppen`}
             >
               {daWhole(p.active)}
             </Text>
-            <Text style={styles.numberLabel}>aktive genstande</Text>
+            <Text style={styles.numberLabel}>aktive genstande i kroppen</Text>
             <StatusLine level={p.level} />
           </View>
 
+          {/* Hvornår tallet når nul, står i bunden af listen "I aften". */}
           <View style={styles.spacer} />
-
-          {/* Tom ved nul, men linjen beholder sin plads, så knapperne
-              ikke flytter sig ved første tryk. */}
-          <Text style={styles.sober}>{sober || " "}</Text>
         </ScrollView>
 
         {advanced ? (
@@ -264,14 +260,7 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   statusAlarm: { fontFamily: fonts.bold, letterSpacing: 0.5 },
-  spacer: { flex: 1, minHeight: 12 },
-  sober: {
-    fontFamily: fonts.regular,
-    fontSize: 13,
-    color: colors.muted,
-    marginTop: 6,
-    marginBottom: 14,
-  },
+  spacer: { flex: 1, minHeight: 16 },
   handle: {
     alignSelf: "center",
     alignItems: "center",
