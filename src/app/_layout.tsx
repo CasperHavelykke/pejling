@@ -2,6 +2,7 @@ import { BricolageGrotesque_600SemiBold } from "@expo-google-fonts/bricolage-gro
 import {
   Inter_400Regular,
   Inter_500Medium,
+  Inter_700Bold,
   useFonts,
 } from "@expo-google-fonts/inter";
 import { Stack } from "expo-router";
@@ -17,6 +18,7 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
+    Inter_700Bold,
     BricolageGrotesque_600SemiBold,
   });
 

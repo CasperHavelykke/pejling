@@ -36,11 +36,12 @@ export const colors = {
   owlCheek: "#e0526a",
 } as const;
 
-// Inter i to vægte, aldrig federe end 500. Bricolage Grotesque bruges kun
-// til ordet "Pejling".
+// Inter i to vægte til al almindelig tekst. Fed bruges kun til "TAG HJEM"
+// på det højeste trin. Bricolage Grotesque bruges kun til ordet "Pejling".
 export const fonts = {
   regular: "Inter_400Regular",
   medium: "Inter_500Medium",
+  bold: "Inter_700Bold",
   wordmark: "BricolageGrotesque_600SemiBold",
   serifItalic: Platform.select({
     ios: "Georgia",

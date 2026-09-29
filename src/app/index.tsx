@@ -130,7 +130,7 @@ export default function PejlingScreen() {
               {daWhole(p.active)}
             </Text>
             <Text style={styles.numberLabel}>aktive genstande</Text>
-            <Text style={styles.status}>{STATUS[p.level]}</Text>
+            <StatusLine level={p.level} />
           </View>
 
           <View style={styles.spacer} />
@@ -187,6 +187,24 @@ export default function PejlingScreen() {
   );
 }
 
+// På det højeste trin står "TAG HJEM" med store bogstaver og fed skrift.
+// Resten af linjen er uændret.
+function StatusLine({ level }: { level: number }) {
+  const text = STATUS[level];
+  const split = text.indexOf(" – ");
+  if (level < STATUS.length - 1 || split === -1) {
+    return <Text style={styles.status}>{text}</Text>;
+  }
+  return (
+    <Text style={styles.status} accessibilityLabel={text}>
+      <Text style={styles.statusAlarm}>
+        {text.slice(0, split).toUpperCase()}
+      </Text>
+      {text.slice(split)}
+    </Text>
+  );
+}
+
 const styles = StyleSheet.create({
   root: { flex: 1, overflow: "hidden" },
   screen: { flex: 1, paddingHorizontal: space.side },
@@ -239,6 +257,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: colors.text,
   },
+  statusAlarm: { fontFamily: fonts.bold, letterSpacing: 0.5 },
   spacer: { flex: 1, minHeight: 12 },
   sober: {
     fontFamily: fonts.regular,
