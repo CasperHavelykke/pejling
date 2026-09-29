@@ -118,16 +118,10 @@ const styles = StyleSheet.create({
   clip: {
     alignItems: "center",
     overflow: "hidden",
-    backgroundColor: colors.surface,
+    backgroundColor: colors.bubble,
     borderRadius: radius.bubble,
-    borderWidth: 1,
-    borderColor: colors.ringSm,
   },
-  inner: {
-    flexShrink: 0,
-    // Rammen sidder på clip; her kompenseres der for dens ene punkt.
-    margin: -1,
-  },
+  inner: { flexShrink: 0 },
   text: {
     fontFamily: fonts.regular,
     fontSize: 15,
@@ -135,17 +129,20 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: colors.text,
   },
+  // En trekant lige under boblen. Den må ikke overlappe boblen, for så
+  // bliver den gennemsigtige flade dobbelt så lys, hvor de mødes.
   tail: {
     position: "absolute",
     left: "50%",
-    bottom: -5,
-    marginLeft: -5,
-    width: 10,
-    height: 10,
-    backgroundColor: colors.surface,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: colors.ringSm,
-    transform: [{ rotate: "45deg" }],
+    top: "100%",
+    marginLeft: -7,
+    width: 0,
+    height: 0,
+    borderLeftWidth: 7,
+    borderRightWidth: 7,
+    borderTopWidth: 7,
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderTopColor: colors.bubble,
   },
 });

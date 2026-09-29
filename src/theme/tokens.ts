@@ -10,6 +10,8 @@ export const colors = {
   muted: "rgba(255,255,255,0.6)",
   divider: "rgba(233,233,237,0.16)",
   pressTint: "rgba(233,233,237,0.07)",
+  // Talebobbelens flade. Gennemsigtig, så den følger baggrundens farve.
+  bubble: "rgba(255,255,255,0.12)",
   backdrop: "rgba(20,20,46,0.6)",
   accent: "#9b6cf5",
   accentText: "#b899ff",

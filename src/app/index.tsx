@@ -192,6 +192,8 @@ export default function PejlingScreen() {
 // På det højeste trin står "TAG HJEM" med store bogstaver og fed skrift.
 // Resten af linjen er uændret.
 function StatusLine({ level }: { level: number }) {
+  // Ved nul siger tallet det hele.
+  if (level === 0) return null;
   const text = STATUS[level];
   const split = text.indexOf(" – ");
   if (level < STATUS.length - 1 || split === -1) {
@@ -260,7 +262,7 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   statusAlarm: { fontFamily: fonts.bold, letterSpacing: 0.5 },
-  spacer: { flex: 1, minHeight: 16 },
+  spacer: { flex: 1, minHeight: 22 },
   handle: {
     alignSelf: "center",
     alignItems: "center",
