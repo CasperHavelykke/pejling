@@ -49,18 +49,18 @@ function Eye({
   dy: number;
 }) {
   return (
-    <Animated.View
-      style={[
-        styles.eye,
-        side === "left" ? { left: 18 } : { right: 18 },
-        {
-          backgroundColor: t.interpolate({
-            inputRange: [0, 1],
-            outputRange: [EYE_CLEAR, EYE_RED],
-          }),
-        },
-      ]}
-    >
+    <View style={[styles.eye, side === "left" ? { left: 17 } : { right: 17 }]}>
+      <Animated.View
+        style={[
+          styles.eyeWhite,
+          {
+            backgroundColor: t.interpolate({
+              inputRange: [0, 1],
+              outputRange: [EYE_CLEAR, EYE_RED],
+            }),
+          },
+        ]}
+      />
       <Animated.View
         style={[
           styles.pupil,
@@ -78,12 +78,12 @@ function Eye({
           {
             height: t.interpolate({
               inputRange: [0, 1],
-              outputRange: [0, EYE * 0.62],
+              outputRange: [0, EYE * 0.62 + 1],
             }),
           },
         ]}
       />
-    </Animated.View>
+    </View>
   );
 }
 
@@ -160,18 +160,30 @@ export function Owl({ t, scale }: { t: number; scale: number }) {
 }
 
 const styles = StyleSheet.create({
+  // Rammen er et punkt større end det hvide hele vejen rundt og har ingen
+  // farve selv. Øjenlåget dækker helt ud til rammens kant, så den runde
+  // kant blander lågets farve med kroppens, som er den samme. Dermed står
+  // der ingen lys ring tilbage om øjet.
   eye: {
     position: "absolute",
-    top: 28,
+    top: 27,
+    width: EYE + 2,
+    height: EYE + 2,
+    borderRadius: (EYE + 2) / 2,
+    overflow: "hidden",
+  },
+  eyeWhite: {
+    position: "absolute",
+    left: 1,
+    top: 1,
     width: EYE,
     height: EYE,
     borderRadius: EYE / 2,
-    overflow: "hidden",
   },
   pupil: {
     position: "absolute",
-    left: 11,
-    top: 11,
+    left: 12,
+    top: 12,
     width: 16,
     height: 16,
     borderRadius: 8,
@@ -179,11 +191,9 @@ const styles = StyleSheet.create({
   },
   lid: {
     position: "absolute",
-    // Et punkt ud over øjets kant, så der ikke står en tynd lys streg
-    // tilbage langs den runde kant.
-    left: -1,
-    right: -1,
-    top: -1,
+    left: 0,
+    right: 0,
+    top: 0,
     // Lige underkant hele vejen ned. Øjets runde form klipper siderne.
     backgroundColor: colors.owlBody,
   },
