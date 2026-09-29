@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pejling – hold øje med aftenen</title>
+    <meta
+      name="description"
+      content="Pejling tæller dine genstande og viser, hvor mange der stadig er aktive i kroppen. Ingen konto, og alt ligger på din egen telefon."
+    />
+    <link rel="icon" href="favicon.png" />
+    <!-- Stilarket står i selve siden, så den virker uden andre filer. -->
+    <style>
+      :root {
+        --bg: #14142e;
+        --surface: #232532;
+        --text: #e9e9ed;
+        --muted: #a9abbd;
+        --accent: #b899ff;
+        --ring: #3f424d;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        line-height: 1.6;
+      }
+
+      main {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 48px 20px 72px;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 40px;
+      }
+
+      header img {
+        width: 56px;
+        height: 56px;
+        border-radius: 13px;
+      }
+
+      header a {
+        color: var(--text);
+        text-decoration: none;
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      h1 {
+        font-size: 30px;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        margin: 0 0 8px;
+        text-wrap: balance;
+      }
+
+      h2 {
+        font-size: 19px;
+        line-height: 1.3;
+        margin: 36px 0 8px;
+      }
+
+      p,
+      ul {
+        margin: 0 0 14px;
+      }
+
+      ul {
+        padding-left: 22px;
+      }
+
+      li {
+        margin-bottom: 6px;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+        border-radius: 3px;
+      }
+
+      .lead {
+        font-size: 19px;
+        color: var(--text);
+      }
+
+      .muted {
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .box {
+        background: var(--surface);
+        border: 1px solid var(--ring);
+        border-radius: 14px;
+        padding: 18px 20px;
+        margin: 24px 0;
+      }
+
+      .box p:last-child {
+        margin-bottom: 0;
+      }
+
+      footer {
+        margin-top: 56px;
+        padding-top: 20px;
+        border-top: 1px solid var(--ring);
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      footer a {
+        margin-right: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="icon.png" alt="" />
+        <a href="index.html">Pejling</a>
+      </header>
+
+      <h1>Hold øje med aftenen</h1>
+      <p class="lead">
+        Tryk, hver gang du drikker noget. Pejling viser, hvor mange genstande
+        der stadig er aktive i kroppen, og hvornår det er tid til en pause.
+      </p>
+
+      <ul>
+        <li>Ét tryk pr. øl, vin, drink eller shot.</li>
+        <li>Tallet falder af sig selv, mens kroppen forbrænder.</li>
+        <li>En kalender viser dine tidligere aftener.</li>
+        <li>Ingen konto. Alt ligger på din egen telefon.</li>
+      </ul>
+
+      <div class="box">
+        <p>
+          Pejling er vejledende. Den måler ikke noget og kan ikke bruges til at
+          vurdere, om du må køre. Appen er kun for voksne.
+        </p>
+      </div>
+
+      <h2 id="support">Hjælp og kontakt</h2>
+      <p>
+        Har du spørgsmål, fundet en fejl eller et forslag, så skriv til
+        <a href="mailto:casper.roket@proton.me">casper.roket@proton.me</a>.
+      </p>
+
+      <footer>
+        <a href="privatliv.html">Privatlivspolitik</a>
+        <a href="privacy.html" lang="en">Privacy Policy</a>
+      </footer>
+    </main>
+  </body>
+</html>
