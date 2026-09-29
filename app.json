@@ -18,8 +18,7 @@
     "android": {
       "package": "dk.pejlingapp.pejling",
       "adaptiveIcon": {
-        "backgroundColor": "#7c55d3",
-        "backgroundImage": "./assets/android-icon-background.png",
+        "backgroundColor": "#14142e",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
