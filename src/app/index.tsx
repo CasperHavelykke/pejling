@@ -116,13 +116,19 @@ export default function PejlingScreen() {
           alwaysBounceVertical={false}
           showsVerticalScrollIndicator={false}
         >
-          <SpeechBubble text={roastFor(p.level, p.tonight.length)} />
+          <SpeechBubble
+            text={roastFor(p.level, p.tonight.length)}
+            compact={advanced}
+          />
 
-          <View style={{ marginTop: advanced ? 10 : 22 }}>
-            <Owl t={p.t} scale={advanced ? 0.7 : 1.35} />
+          {/* I Avanceret fylder knapperne tre rækker. Ugle og luft er gjort
+              mindre, så linjen over knapperne ikke bliver skåret af på
+              små skærme. */}
+          <View style={{ marginTop: advanced ? 6 : 22 }}>
+            <Owl t={p.t} scale={advanced ? 0.6 : 1.35} />
           </View>
 
-          <View style={styles.numberBlock}>
+          <View style={[styles.numberBlock, advanced && { marginTop: 12 }]}>
             <Text
               style={styles.number}
               accessibilityLabel={`${daWhole(p.active)} aktive genstande`}

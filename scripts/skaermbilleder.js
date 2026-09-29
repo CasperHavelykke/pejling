@@ -14,11 +14,14 @@ const fs = require("fs");
 const path = require("path");
 
 const OUT = process.argv[2];
+// "ios" giver 1290 × 2796 til App Store. "android" giver 1200 × 2400 til
+// Google Play, som højst tillader forholdet 2:1.
+const TARGET = process.argv[3] === "android" ? "android" : "ios";
 const URL = "http://localhost:8081";
-const W = 430;
-const H = 932;
-const TOP = 59; // statuslinje
-const BOTTOM = 34; // hjemmestreg
+const W = TARGET === "android" ? 400 : 430;
+const H = TARGET === "android" ? 800 : 932;
+const TOP = TARGET === "android" ? 36 : 59; // statuslinje
+const BOTTOM = TARGET === "android" ? 22 : 34; // hjemmestreg
 const SCALE = 3;
 
 // Appens ur: lørdag 26. september 2026 kl. 23.41.
@@ -88,8 +91,8 @@ function statusBar(color) {
   // Ur, signal, wifi og batteri som på en iPhone.
   return `
   <div style="position:absolute;left:0;right:0;top:0;height:${TOP}px;color:${color};font:600 17px -apple-system,'SF Pro Text','Segoe UI',Inter,sans-serif">
-    <div style="position:absolute;left:52px;top:21px;letter-spacing:-0.2px">23.41</div>
-    <svg style="position:absolute;right:34px;top:23px" width="78" height="14" viewBox="0 0 78 14" fill="${color}">
+    <div style="position:absolute;left:${TARGET === "android" ? 24 : 52}px;top:${TARGET === "android" ? 9 : 21}px;letter-spacing:-0.2px;font-size:${TARGET === "android" ? 15 : 17}px">23.41</div>
+    <svg style="position:absolute;right:${TARGET === "android" ? 20 : 34}px;top:${TARGET === "android" ? 11 : 23}px" width="78" height="14" viewBox="0 0 78 14" fill="${color}">
       <rect x="0" y="9" width="3.2" height="4" rx="1"/><rect x="5" y="6.5" width="3.2" height="6.5" rx="1"/>
       <rect x="10" y="3.5" width="3.2" height="9.5" rx="1"/><rect x="15" y="0.5" width="3.2" height="12.5" rx="1"/>
       <path d="M32 3.2c2.6 0 4.9 1 6.6 2.7l-1.2 1.3A7.6 7.6 0 0 0 32 5a7.6 7.6 0 0 0-5.4 2.2l-1.2-1.3A9.4 9.4 0 0 1 32 3.2zm0 3.6c1.6 0 3 .6 4.1 1.7l-1.2 1.3a4 4 0 0 0-5.8 0l-1.2-1.3A5.8 5.8 0 0 1 32 6.8zm0 3.5c.7 0 1.3.3 1.8.8L32 13l-1.8-1.900c.5-.5 1.1-.800 1.8-.800z"/>
@@ -179,7 +182,7 @@ function statusBar(color) {
       <div style="position:absolute;left:0;right:0;bottom:0;height:${BOTTOM + 40}px;background:${bottomColor}"></div>
       <img src="data:image/png;base64,${appPng.toString("base64")}" style="position:absolute;left:0;top:${TOP}px;width:${W}px;height:${H - TOP - BOTTOM}px"/>
       ${statusBar(barInk)}
-      <div style="position:absolute;left:50%;bottom:8px;width:139px;height:5px;margin-left:-69.5px;border-radius:3px;background:${barInk};opacity:0.9"></div>
+      <div style="position:absolute;left:50%;bottom:${TARGET === "android" ? 7 : 8}px;width:${TARGET === "android" ? 108 : 139}px;height:${TARGET === "android" ? 4 : 5}px;margin-left:${TARGET === "android" ? -54 : -69.5}px;border-radius:3px;background:${barInk};opacity:0.9"></div>
     </body></html>`);
     await new Promise((r) => setTimeout(r, 300));
     const file = path.join(OUT, shot.name + ".png");

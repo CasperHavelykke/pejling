@@ -10,7 +10,14 @@ import { colors, fonts, radius } from "../theme/tokens";
 
 const DURATION = 280;
 
-export function SpeechBubble({ text }: { text: string }) {
+export function SpeechBubble({
+  text,
+  compact = false,
+}: {
+  text: string;
+  // Mindre luft over boblen, når skærmen skal rumme mange knapper.
+  compact?: boolean;
+}) {
   const width = useRef(new Animated.Value(0)).current;
   const height = useRef(new Animated.Value(0)).current;
   const fade = useRef(new Animated.Value(1)).current;
@@ -57,7 +64,7 @@ export function SpeechBubble({ text }: { text: string }) {
   }
 
   return (
-    <View style={styles.wrap}>
+    <View style={[styles.wrap, compact && styles.wrapCompact]}>
       <View
         style={[styles.box, styles.measure]}
         pointerEvents="none"
@@ -93,6 +100,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 28,
   },
+  wrapCompact: { marginTop: 14 },
   // Fælles mål for den usynlige og den synlige boble, så teksten ombrydes
   // ens i begge.
   box: {
