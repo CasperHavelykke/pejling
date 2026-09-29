@@ -27,8 +27,17 @@ export function SimpleButtons({ onAdd }: Props) {
           <View style={styles.simpleIcon}>
             <DrinkIcon icon={d.icon} height={28} color={colors.btnFg} />
           </View>
-          <Text style={styles.simpleName}>{d.label}</Text>
-          <Text style={styles.sub}>{d.sub}</Text>
+          <Text style={styles.simpleName} numberOfLines={1}>
+            {d.label}
+          </Text>
+          <Text
+            style={styles.sub}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.85}
+          >
+            {d.sub}
+          </Text>
         </Pressable>
       ))}
     </View>
@@ -39,7 +48,7 @@ export function AdvancedButtons({ onAdd }: Props) {
   return (
     <View style={styles.groups}>
       {ADVANCED_GROUPS.map((g) => (
-        <View key={g.category}>
+        <View key={g.key}>
           <Text style={styles.kicker}>{g.title}</Text>
           <View style={styles.advRow}>
             {g.items.map((d) => (
@@ -89,12 +98,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.btnActive,
     borderColor: colors.btnActive,
   },
-  simpleRow: { flexDirection: "row", gap: 10 },
+  simpleRow: { flexDirection: "row", gap: 8 },
   simpleButton: {
     flex: 1,
     alignItems: "center",
     paddingVertical: 22,
-    paddingHorizontal: 8,
+    // Smal kant: fire knapper skal kunne stå side om side på små skærme.
+    paddingHorizontal: 4,
+    minWidth: 0,
     gap: 3,
   },
   simpleIcon: { marginBottom: 4 },
@@ -124,11 +135,13 @@ const styles = StyleSheet.create({
     minHeight: 52,
     paddingTop: 7,
     paddingBottom: 6,
-    paddingHorizontal: 9,
+    // Smal kant: rækken med drinks og vin har fire knapper, og "Stærk"
+    // skal kunne stå ved siden af det brede cocktailikon.
+    paddingHorizontal: 7,
     gap: 1,
     justifyContent: "center",
   },
-  advTop: { flexDirection: "row", alignItems: "center", gap: 6 },
+  advTop: { flexDirection: "row", alignItems: "center", gap: 4 },
   // Fast højde: et højere ikon må ikke gøre sin knap højere end naboernes.
   advIcon: { height: 16, justifyContent: "center" },
   advName: {

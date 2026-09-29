@@ -2,11 +2,12 @@
 // så 0,7 + 2,3 ikke giver flydende-komma-støj. Mønstret er arvet fra Loggen.
 // 1 genstand = 12 g ren alkohol.
 
-export type DrinkCategory = "beer" | "drink" | "shot";
+export type DrinkCategory = "beer" | "wine" | "drink" | "shot";
 
 export type DrinkKind =
   // Simpel
   | "øl"
+  | "vin"
   | "drink"
   | "shot"
   // Avanceret
@@ -17,6 +18,7 @@ export type DrinkKind =
   | "drink_mild"
   | "drink_alm"
   | "drink_stærk"
+  | "vin_15"
   | "shot_alm_2"
   | "shot_stærk_2"
   | "shot_alm_4"
@@ -29,6 +31,7 @@ export type DrinkIconKey =
   | "cocktailMild"
   | "cocktailMedium"
   | "cocktailStrong"
+  | "wine"
   | "shot"
   | "shot2"
   | "shot2Strong"
@@ -50,6 +53,8 @@ export type DrinkDef = {
 
 export const SIMPLE_DRINKS: readonly DrinkDef[] = [
   { kind: "øl", category: "beer", icon: "bottle", name: "Øl", label: "Øl", sub: "1 genstand", unitsX10: 10 },
+  // Et almindeligt glas: 15 cl ved 12,5 % er ca. 14,8 g alkohol.
+  { kind: "vin", category: "wine", icon: "wine", name: "Vin", label: "Vin", sub: "1,2 genstand", unitsX10: 12 },
   { kind: "drink", category: "drink", icon: "cocktail", name: "Drink", label: "Drink", sub: "1,5 genstand", unitsX10: 15 },
   { kind: "shot", category: "shot", icon: "shot", name: "Shot", label: "Shot", sub: "1 genstand", unitsX10: 10 },
 ];
@@ -62,26 +67,30 @@ export const ADVANCED_DRINKS: readonly DrinkDef[] = [
   { kind: "drink_mild", category: "drink", icon: "cocktailMild", name: "Mild drink", label: "Mild", sub: "1 gs.", unitsX10: 10 },
   { kind: "drink_alm", category: "drink", icon: "cocktailMedium", name: "Alm. drink", label: "Alm.", sub: "1,5 gs.", unitsX10: 15 },
   { kind: "drink_stærk", category: "drink", icon: "cocktailStrong", name: "Stærk drink", label: "Stærk", sub: "2 gs.", unitsX10: 20 },
+  { kind: "vin_15", category: "wine", icon: "wine", name: "Vin 15 cl", label: "Vin", sub: "15 cl · 1,2", unitsX10: 12 },
   { kind: "shot_alm_2", category: "shot", icon: "shot2", name: "Alm. shot 2 cl", label: "Alm.", sub: "2 cl · 0,5", unitsX10: 5 },
   { kind: "shot_stærk_2", category: "shot", icon: "shot2Strong", name: "Stærk shot 2 cl", label: "Stærk", sub: "2 cl · 0,7", unitsX10: 7 },
   { kind: "shot_alm_4", category: "shot", icon: "shot4", name: "Alm. shot 4 cl", label: "Alm.", sub: "4 cl · 1", unitsX10: 10 },
   { kind: "shot_stærk_4", category: "shot", icon: "shot4Strong", name: "Stærk shot 4 cl", label: "Stærk", sub: "4 cl · 1,4", unitsX10: 14 },
 ];
 
+// Vin har kun én knap i Avanceret og deler derfor række med drinks.
 export const ADVANCED_GROUPS: readonly {
   title: string;
-  category: DrinkCategory;
+  key: string;
   items: readonly DrinkDef[];
 }[] = (
   [
-    ["Øl", "beer"],
-    ["Drinks", "drink"],
-    ["Shots", "shot"],
+    ["Øl", ["beer"]],
+    ["Drinks og vin", ["drink", "wine"]],
+    ["Shots", ["shot"]],
   ] as const
-).map(([title, category]) => ({
+).map(([title, categories]) => ({
   title,
-  category,
-  items: ADVANCED_DRINKS.filter((d) => d.category === category),
+  key: categories[0],
+  items: ADVANCED_DRINKS.filter((d) =>
+    (categories as readonly DrinkCategory[]).includes(d.category),
+  ),
 }));
 
 const BY_KIND = new Map<string, DrinkDef>(

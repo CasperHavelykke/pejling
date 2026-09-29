@@ -154,6 +154,22 @@ function CocktailStrong(props: Props) {
   );
 }
 
+// --- Vin -----------------------------------------------------------------
+
+// Lucides vinglas.
+function Wine(props: Props) {
+  return (
+    <Frame viewBox={[0, 0, 24, 24]} {...props}>
+      <G strokeWidth={2}>
+        <Path d="M8 22h8" />
+        <Path d="M7 10h10" />
+        <Path d="M12 15v7" />
+        <Path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z" />
+      </G>
+    </Frame>
+  );
+}
+
 // --- Shots ---------------------------------------------------------------
 
 const SHOT_BOX: [number, number, number, number] = [0, 0, 17, 26];
@@ -275,6 +291,8 @@ export function DrinkIcon({
       return <CocktailMedium {...p} />;
     case "cocktailStrong":
       return <CocktailStrong {...p} />;
+    case "wine":
+      return <Wine {...p} />;
     case "shot":
       return <ShotSimple {...p} />;
     case "shot2":
@@ -294,6 +312,6 @@ export function iconHeight(icon: DrinkIconKey, base: number): number {
   return icon === "cocktailMild" ||
     icon === "cocktailMedium" ||
     icon === "cocktailStrong"
-    ? Math.round(base * 1.3)
+    ? Math.round(base * 1.2)
     : base;
 }

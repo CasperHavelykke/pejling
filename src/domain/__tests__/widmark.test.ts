@@ -12,7 +12,12 @@ import {
 } from "../widmark";
 import { da, daWhole, entryWord, genstandWord, hhmm, soberLine } from "../format";
 import { infoExplanation, levelRows, roastFor, ROASTS } from "../copy";
-import { ADVANCED_DRINKS, SIMPLE_DRINKS, drinkName } from "../drinks";
+import {
+  ADVANCED_DRINKS,
+  ADVANCED_GROUPS,
+  SIMPLE_DRINKS,
+  drinkName,
+} from "../drinks";
 
 const H = 3_600_000;
 const man80: Body = { weightKg: 80, sex: "m" };
@@ -218,6 +223,21 @@ describe("format og tekster", () => {
     expect(new Set(all.map((d) => d.kind)).size).toBe(all.length);
     expect(drinkName("øl_stærk_50")).toBe("Stærk øl 50 cl");
     expect(drinkName("ukendt")).toBe("ukendt");
+    expect(drinkName("vin")).toBe("Vin");
+    expect(drinkName("vin_15")).toBe("Vin 15 cl");
+  });
+
+  test("vin står i Simpel og deler række med drinks i Avanceret", () => {
+    expect(SIMPLE_DRINKS.map((d) => d.kind)).toEqual(["øl", "vin", "drink", "shot"]);
+    const row = ADVANCED_GROUPS.find((g) => g.title === "Drinks og vin");
+    expect(row?.items.map((d) => d.kind)).toEqual([
+      "drink_mild",
+      "drink_alm",
+      "drink_stærk",
+      "vin_15",
+    ]);
+    // Alle knapper fra Avanceret ligger i en række.
+    expect(ADVANCED_GROUPS.flatMap((g) => g.items)).toHaveLength(ADVANCED_DRINKS.length);
   });
 
   test("vægt holdes inden for 35-150 kg", () => {
