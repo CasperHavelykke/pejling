@@ -40,8 +40,9 @@ yarn-error.*
 /ios
 /android
 
-# Holdes ude af repoet: designfiler og filer til AI-assistenter
-/docs/design-handoff/
+# Holdes ude af repoet: designfiler, butikstekster og udgivelsesforløb,
+# og filer til AI-assistenter
+/docs/
 /.claude/
 /AGENTS.md
 /CLAUDE.md
