@@ -12,6 +12,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
+import { strings } from "../i18n";
 import { colors } from "../theme/tokens";
 
 // Så langt eller så hurtigt skal man trække, før panelet lukker.
@@ -121,7 +122,7 @@ export function BottomPanel({
           style={StyleSheet.absoluteFill}
           onPress={onClose}
           accessibilityRole="button"
-          accessibilityLabel="Luk"
+          accessibilityLabel={strings().info.close}
         />
       </Animated.View>
       <Animated.View

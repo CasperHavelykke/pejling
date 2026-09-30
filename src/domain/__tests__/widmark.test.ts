@@ -11,7 +11,8 @@ import {
   type Body,
 } from "../widmark";
 import { da, daWhole, entryWord, genstandWord, hhmm, soberLine } from "../format";
-import { infoExplanation, levelRows, roastFor, ROASTS } from "../copy";
+import { infoExplanation, levelRows, roastFor } from "../copy";
+import { strings } from "../../i18n";
 import {
   ADVANCED_DRINKS,
   ADVANCED_GROUPS,
@@ -212,7 +213,7 @@ describe("format og tekster", () => {
   test("roast skifter med antal og holder sig i niveauets liste", () => {
     for (let level = 0; level < 6; level++) {
       for (let n = 0; n < 10; n++) {
-        expect(ROASTS[level]).toContain(roastFor(level, n));
+        expect(strings().roasts[level]).toContain(roastFor(level, n));
       }
     }
     expect(roastFor(2, 1)).not.toBe(roastFor(2, 2));
@@ -229,7 +230,7 @@ describe("format og tekster", () => {
 
   test("vin står i Simpel og deler række med drinks i Avanceret", () => {
     expect(SIMPLE_DRINKS.map((d) => d.kind)).toEqual(["øl", "vin", "drink", "shot"]);
-    const row = ADVANCED_GROUPS.find((g) => g.title === "Drinks og vin");
+    const row = ADVANCED_GROUPS.find((g) => g.key === "drink");
     expect(row?.items.map((d) => d.kind)).toEqual([
       "drink_mild",
       "drink_alm",

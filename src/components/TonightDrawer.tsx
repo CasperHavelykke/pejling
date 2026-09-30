@@ -7,6 +7,7 @@ import {
   hhmm,
   unitsX10Label,
 } from "../domain/format";
+import { useStrings } from "../i18n";
 import { colors, fonts, radius, space } from "../theme/tokens";
 import { BottomPanel } from "./BottomPanel";
 
@@ -33,6 +34,7 @@ export function TonightDrawer({
   // Listen ruller kun, når den er længere end pladsen. Ellers ejer
   // trækket hele panelet. Er listen rullet ned, skal den rulle op igen,
   // før et træk lukker panelet.
+  const s = useStrings();
   const scrollY = useRef(0);
   const [listHeight, setListHeight] = useState(0);
   const [contentHeight, setContentHeight] = useState(0);
@@ -49,14 +51,14 @@ export function TonightDrawer({
       <Pressable
         onPress={onClose}
         accessibilityRole="button"
-        accessibilityLabel="Luk listen"
+        accessibilityLabel={s.drawer.close}
         style={styles.handle}
       >
         <View style={styles.bar} />
       </Pressable>
 
       <View style={styles.titleRow}>
-        <Text style={styles.title}>I aften</Text>
+        <Text style={styles.title}>{s.drawer.title}</Text>
         {drinks.length > 0 && (
           <Text style={styles.total}>
             {drinks.length} {entryWord(drinks.length)} ·{" "}
@@ -78,7 +80,7 @@ export function TonightDrawer({
         onContentSizeChange={(_w, h) => setContentHeight(h)}
       >
         {drinks.length === 0 ? (
-          <Text style={styles.empty}>Ingen genstande endnu.</Text>
+          <Text style={styles.empty}>{s.drawer.empty}</Text>
         ) : (
           drinks.map((d) => (
             <View key={d.id} style={styles.row}>
@@ -86,18 +88,23 @@ export function TonightDrawer({
               <Text style={styles.name} numberOfLines={1}>
                 {drinkName(d.kind)}
               </Text>
-              <Text style={styles.units}>{unitsX10Label(d.unitsX10)} gs.</Text>
+              <Text style={styles.units}>
+                {unitsX10Label(d.unitsX10)} {s.unitShort}
+              </Text>
               <Pressable
                 onPress={() => onUndo(d.id)}
                 accessibilityRole="button"
-                accessibilityLabel={`Fortryd ${drinkName(d.kind)} klokken ${hhmm(d.t)}`}
+                accessibilityLabel={s.drawer.undoLabel(
+                  drinkName(d.kind),
+                  hhmm(d.t),
+                )}
                 hitSlop={{ top: 10, bottom: 10, left: 6, right: 6 }}
                 style={({ pressed }) => [
                   styles.undo,
                   pressed && { backgroundColor: colors.accentTint },
                 ]}
               >
-                <Text style={styles.undoText}>Fortryd</Text>
+                <Text style={styles.undoText}>{s.drawer.undo}</Text>
               </Pressable>
             </View>
           ))
@@ -115,7 +122,7 @@ export function TonightDrawer({
             pressed && { backgroundColor: colors.accentTint },
           ]}
         >
-          <Text style={styles.historyText}>Tidligere aftener</Text>
+          <Text style={styles.historyText}>{s.drawer.history}</Text>
         </Pressable>
       </View>
     </BottomPanel>

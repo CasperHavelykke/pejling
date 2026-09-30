@@ -1,32 +1,12 @@
-// Kalenderhjælpere. Ugen starter mandag. Navne skrives i hånden, fordi
-// understøttelsen af da-DK i Intl varierer mellem platforme.
+// Kalenderhjælpere. Ugen starter mandag. Navne på måneder og ugedage ligger
+// pr. sprog i src/i18n og skrives i hånden, fordi understøttelsen af da-DK
+// i Intl varierer mellem platforme.
 
-export const MONTHS = [
-  "januar",
-  "februar",
-  "marts",
-  "april",
-  "maj",
-  "juni",
-  "juli",
-  "august",
-  "september",
-  "oktober",
-  "november",
-  "december",
-] as const;
+import { strings } from "../i18n";
 
-export const WEEKDAYS_SHORT = ["M", "T", "O", "T", "F", "L", "S"] as const;
-
-const WEEKDAYS_LONG = [
-  "søndag",
-  "mandag",
-  "tirsdag",
-  "onsdag",
-  "torsdag",
-  "fredag",
-  "lørdag",
-] as const;
+export function weekdaysShort(): readonly string[] {
+  return strings().weekdaysShort;
+}
 
 export type YearMonth = { year: number; month: number };
 
@@ -60,12 +40,13 @@ export function compareMonths(a: YearMonth, b: YearMonth): number {
 }
 
 export function monthTitle({ year, month }: YearMonth): string {
-  return `${MONTHS[month]} ${year}`;
+  return `${strings().months[month]} ${year}`;
 }
 
 // "lørdag 26. september"
 export function longDate(key: string): string {
   const [y, m, d] = key.split("-").map(Number);
   const date = new Date(y, m - 1, d);
-  return `${WEEKDAYS_LONG[date.getDay()]} ${d}. ${MONTHS[m - 1]}`;
+  const s = strings();
+  return s.longDate(s.weekdaysLong[date.getDay()], d, s.months[m - 1]);
 }

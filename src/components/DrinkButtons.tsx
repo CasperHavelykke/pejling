@@ -2,22 +2,29 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import {
   ADVANCED_GROUPS,
   SIMPLE_DRINKS,
+  drinkText,
+  groupTitle,
   type DrinkDef,
 } from "../domain/drinks";
+import { useLang } from "../i18n";
 import { colors, fonts, radius } from "../theme/tokens";
 import { DrinkIcon, iconHeight } from "./icons";
 
 type Props = { onAdd: (def: DrinkDef) => void };
 
 export function SimpleButtons({ onAdd }: Props) {
+  // Tegnes igen, når sproget skifter.
+  useLang();
   return (
     <View style={styles.simpleRow}>
-      {SIMPLE_DRINKS.map((d) => (
+      {SIMPLE_DRINKS.map((d) => {
+        const text = drinkText(d.kind);
+        return (
         <Pressable
           key={d.kind}
           onPress={() => onAdd(d)}
           accessibilityRole="button"
-          accessibilityLabel={`${d.name}, ${d.sub}`}
+          accessibilityLabel={`${text.name}, ${text.sub}`}
           style={({ pressed }) => [
             styles.button,
             styles.simpleButton,
@@ -27,8 +34,13 @@ export function SimpleButtons({ onAdd }: Props) {
           <View style={styles.simpleIcon}>
             <DrinkIcon icon={d.icon} height={28} color={colors.btnFg} />
           </View>
-          <Text style={styles.simpleName} numberOfLines={1}>
-            {d.label}
+          <Text
+            style={styles.simpleName}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
+          >
+            {text.label}
           </Text>
           <Text
             style={styles.sub}
@@ -36,27 +48,31 @@ export function SimpleButtons({ onAdd }: Props) {
             adjustsFontSizeToFit
             minimumFontScale={0.85}
           >
-            {d.sub}
+            {text.sub}
           </Text>
         </Pressable>
-      ))}
+        );
+      })}
     </View>
   );
 }
 
 export function AdvancedButtons({ onAdd }: Props) {
+  useLang();
   return (
     <View style={styles.groups}>
       {ADVANCED_GROUPS.map((g) => (
         <View key={g.key}>
-          <Text style={styles.kicker}>{g.title}</Text>
+          <Text style={styles.kicker}>{groupTitle(g.key)}</Text>
           <View style={styles.advRow}>
-            {g.items.map((d) => (
+            {g.items.map((d) => {
+              const text = drinkText(d.kind);
+              return (
               <Pressable
                 key={d.kind}
                 onPress={() => onAdd(d)}
                 accessibilityRole="button"
-                accessibilityLabel={`${d.name}, ${d.sub}`}
+                accessibilityLabel={`${text.name}, ${text.sub}`}
                 style={({ pressed }) => [
                   styles.button,
                   styles.advButton,
@@ -72,14 +88,15 @@ export function AdvancedButtons({ onAdd }: Props) {
                     />
                   </View>
                   <Text style={styles.advName} numberOfLines={1}>
-                    {d.label}
+                    {text.label}
                   </Text>
                 </View>
                 <Text style={styles.sub} numberOfLines={1}>
-                  {d.sub}
+                  {text.sub}
                 </Text>
               </Pressable>
-            ))}
+              );
+            })}
           </View>
         </View>
       ))}

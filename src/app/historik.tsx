@@ -10,16 +10,16 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Chevron } from "../components/Chevron";
 import {
-  WEEKDAYS_SHORT,
   addMonths,
   compareMonths,
   dayKey,
   longDate,
   monthGrid,
   monthTitle,
+  weekdaysShort,
   type YearMonth,
 } from "../domain/calendar";
-import { LEVEL_NAMES } from "../domain/copy";
+import { levelName } from "../domain/copy";
 import { drinkName, type DrinkLog } from "../domain/drinks";
 import {
   daWhole,
@@ -38,6 +38,7 @@ import {
   clampWeight,
   type Body,
 } from "../domain/widmark";
+import { useStrings } from "../i18n";
 import { loadDrinksSince, loadSettings } from "../storage/store";
 import { mixOklch } from "../theme/color";
 import { colors, fonts, radius, space } from "../theme/tokens";
@@ -54,10 +55,6 @@ function stepFor(level: number) {
   return STEPS[Math.min(STEPS.length, Math.max(1, level)) - 1];
 }
 
-function levelName(level: number): string {
-  return LEVEL_NAMES[Math.min(LEVEL_NAMES.length, Math.max(1, level)) - 1];
-}
-
 function thisMonth(): YearMonth {
   const d = new Date();
   return { year: d.getFullYear(), month: d.getMonth() };
@@ -65,6 +62,7 @@ function thisMonth(): YearMonth {
 
 export default function HistoryScreen() {
   const insets = useSafeAreaInsets();
+  const s = useStrings();
   const [logs, setLogs] = useState<DrinkLog[] | null>(null);
   const [fallback, setFallback] = useState<Body>({
     weightKg: DEFAULT_WEIGHT_KG,
@@ -142,7 +140,7 @@ export default function HistoryScreen() {
         <Pressable
           onPress={() => (router.canGoBack() ? router.back() : router.replace("/"))}
           accessibilityRole="button"
-          accessibilityLabel="Tilbage"
+          accessibilityLabel={s.history.back}
           hitSlop={10}
           style={({ pressed }) => [
             styles.back,
@@ -152,7 +150,7 @@ export default function HistoryScreen() {
           <Chevron direction="left" color={colors.text} />
         </Pressable>
         <Text style={styles.title} accessibilityRole="header">
-          Historik
+          {s.history.title}
         </Text>
       </View>
 
@@ -166,7 +164,7 @@ export default function HistoryScreen() {
         <View style={styles.monthRow}>
           <MonthButton
             direction="left"
-            label="Forrige måned"
+            label={s.history.previousMonth}
             disabled={atEarliest}
             onPress={() => go(-1)}
           />
@@ -176,20 +174,20 @@ export default function HistoryScreen() {
               {logs === null
                 ? " "
                 : summary.days === 0
-                  ? "Ingen indtastninger"
-                  : `${summary.days} ${summary.days === 1 ? "dag" : "dage"} · ${unitsX10Label(summary.totalX10)} ${genstandWord(summary.totalX10 / 10)}`}
+                  ? s.history.noEntries
+                  : `${summary.days} ${s.dayWord(summary.days)} · ${unitsX10Label(summary.totalX10)} ${genstandWord(summary.totalX10 / 10)}`}
             </Text>
           </View>
           <MonthButton
             direction="right"
-            label="Næste måned"
+            label={s.history.nextMonth}
             disabled={atLatest}
             onPress={() => go(1)}
           />
         </View>
 
         <View style={styles.weekdays}>
-          {WEEKDAYS_SHORT.map((d, i) => (
+          {weekdaysShort().map((d, i) => (
             <Text key={i} style={styles.weekday}>
               {d}
             </Text>
@@ -227,10 +225,10 @@ export default function HistoryScreen() {
         ) : (
           <Text style={styles.hint}>
             {selected
-              ? `Ingen indtastninger ${longDate(selected)}.`
+              ? s.history.noEntriesOn(longDate(selected))
               : days.size === 0 && logs !== null
-                ? "Her kommer dine aftener til at stå, når du har brugt Pejling."
-                : "Tryk på en dag for at se aftenen."}
+                ? s.history.firstUse
+                : s.history.tapADay}
           </Text>
         )}
       </ScrollView>
@@ -283,10 +281,11 @@ function DayCell({
   label: string;
   onPress: () => void;
 }) {
+  const s = useStrings();
   const step = summary ? stepFor(summary.peakLevel) : null;
   const a11y = summary
     ? `${label}. ${unitsX10Label(summary.totalX10)} ${genstandWord(summary.totalX10 / 10)}, ${levelName(summary.peakLevel).toLowerCase()}`
-    : `${label}. Ingen indtastninger`;
+    : `${label}. ${s.history.noEntries}`;
   return (
     <Pressable
       onPress={onPress}
@@ -323,14 +322,15 @@ function DayCell({
 }
 
 function Legend() {
+  const s = useStrings();
   return (
     <View
       style={styles.legend}
       accessible
-      accessibilityLabel="Farven viser aftenens højeste antal aktive genstande, fra let påvirket til tag hjem. Tallet er genstande i alt."
+      accessibilityLabel={s.history.legendLabel}
     >
       <Text style={styles.legendTitle}>
-        Farve: maks aktive genstande · Tal: genstande i alt
+        {s.history.legend}
       </Text>
       <View style={styles.legendRow}>
         <Text style={styles.legendEnd}>{levelName(1)}</Text>
@@ -346,6 +346,7 @@ function Legend() {
 }
 
 function DayDetail({ day }: { day: DaySummary }) {
+  const s = useStrings();
   const step = stepFor(day.peakLevel);
   const span =
     hhmm(day.start) === hhmm(day.end)
@@ -359,17 +360,17 @@ function DayDetail({ day }: { day: DaySummary }) {
 
       <View style={styles.stats}>
         <Stat
-          label="Genstande"
+          label={s.history.units}
           value={unitsX10Label(day.totalX10)}
         />
         <Stat
-          label="Maks aktive"
+          label={s.history.peak}
           value={daWhole(day.peakActive)}
           swatch={step.fill}
           note={levelName(day.peakLevel)}
         />
         <Stat
-          label={day.entries === 1 ? "Indtastning" : "Indtastninger"}
+          label={s.history.entries(day.entries)}
           value={String(day.entries)}
           note={span}
         />
@@ -382,14 +383,15 @@ function DayDetail({ day }: { day: DaySummary }) {
             <Text style={styles.rowName} numberOfLines={1}>
               {drinkName(l.kind)}
             </Text>
-            <Text style={styles.rowUnits}>{unitsX10Label(l.unitsX10)} gs.</Text>
+            <Text style={styles.rowUnits}>
+              {unitsX10Label(l.unitsX10)} {s.unitShort}
+            </Text>
           </View>
         ))}
       </View>
       {dayKeyOf(day.end) !== day.dayKey && (
         <Text style={styles.detailFoot}>
-          Aftenen fortsatte efter midnat og står samlet på den dag, den
-          startede.
+          {s.history.pastMidnight}
         </Text>
       )}
     </View>

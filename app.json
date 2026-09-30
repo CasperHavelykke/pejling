@@ -11,6 +11,10 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "dk.pejlingapp.pejling",
+      "infoPlist": {
+        "CFBundleDevelopmentRegion": "da",
+        "CFBundleLocalizations": ["da", "en"]
+      },
       "config": {
         "usesNonExemptEncryption": false
       }
@@ -38,7 +42,8 @@
           "imageWidth": 220
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-localization"
     ],
     "extra": {
       "router": {},

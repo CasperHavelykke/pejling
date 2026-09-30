@@ -1,8 +1,9 @@
-// Laver skærmbilleder til App Store ud fra appens browserudgave.
+// Laver skærmbilleder til butikkerne ud fra appens browserudgave.
 //
 // Brug: start appen med `npx expo start`, og kør så fra en mappe, hvor
 // puppeteer-core og pngjs er installeret:
-//   node scripts/skaermbilleder.js <mappe til billederne>
+//   node scripts/skaermbilleder.js <mappe> [ios|android] [da|en]
+// Kører appen på en anden port end 8081, sættes den med PORT=8082.
 // Pakkerne er med vilje ikke en del af appens afhængigheder.
 // Størrelse: 1290 × 2796 px, som er 430 × 932 punkter i tredobbelt opløsning.
 // Appen tegnes i området mellem statuslinjen og hjemmestregen, og de to
@@ -17,7 +18,8 @@ const OUT = process.argv[2];
 // "ios" giver 1290 × 2796 til App Store. "android" giver 1200 × 2400 til
 // Google Play, som højst tillader forholdet 2:1.
 const TARGET = process.argv[3] === "android" ? "android" : "ios";
-const URL = "http://localhost:8081";
+const LANG = process.argv[4] === "en" ? "en" : "da";
+const URL = "http://localhost:" + (process.env.PORT || "8081");
 const W = TARGET === "android" ? 400 : 430;
 const H = TARGET === "android" ? 800 : 932;
 const TOP = TARGET === "android" ? 36 : 59; // statuslinje
@@ -73,13 +75,18 @@ const HEAVY = [
 const SHOTS = [
   { name: "01-hovedskaerm", drinks: LIGHT, mode: "simple" },
   { name: "02-avanceret", drinks: LIGHT, mode: "advanced" },
-  { name: "03-i-aften", drinks: EVENING, mode: "simple", click: "Vis listen" },
+  {
+    name: "03-i-aften",
+    drinks: EVENING,
+    mode: "simple",
+    click: LANG === "en" ? "Show the list" : "Vis listen",
+  },
   {
     name: "04-historik",
     drinks: [...HISTORY, ...EVENING],
     mode: "simple",
     path: "/historik",
-    click: "lørdag 19. september",
+    click: LANG === "en" ? "Saturday 19 September" : "lørdag 19. september",
   },
   { name: "05-tag-hjem", drinks: HEAVY, mode: "simple" },
 ];
@@ -91,7 +98,7 @@ function statusBar(color) {
   // Ur, signal, wifi og batteri som på en iPhone.
   return `
   <div style="position:absolute;left:0;right:0;top:0;height:${TOP}px;color:${color};font:600 17px -apple-system,'SF Pro Text','Segoe UI',Inter,sans-serif">
-    <div style="position:absolute;left:${TARGET === "android" ? 24 : 52}px;top:${TARGET === "android" ? 9 : 21}px;letter-spacing:-0.2px;font-size:${TARGET === "android" ? 15 : 17}px">23.41</div>
+    <div style="position:absolute;left:${TARGET === "android" ? 24 : 52}px;top:${TARGET === "android" ? 9 : 21}px;letter-spacing:-0.2px;font-size:${TARGET === "android" ? 15 : 17}px">${LANG === "en" ? "23:41" : "23.41"}</div>
     <svg style="position:absolute;right:${TARGET === "android" ? 20 : 34}px;top:${TARGET === "android" ? 11 : 23}px" width="78" height="14" viewBox="0 0 78 14" fill="${color}">
       <rect x="0" y="9" width="3.2" height="4" rx="1"/><rect x="5" y="6.5" width="3.2" height="6.5" rx="1"/>
       <rect x="10" y="3.5" width="3.2" height="9.5" rx="1"/><rect x="15" y="0.5" width="3.2" height="12.5" rx="1"/>
@@ -122,7 +129,7 @@ function statusBar(color) {
 
     // Flyt appens ur til lørdag aften, og læg prøvedata ind før første visning.
     await page.evaluateOnNewDocument(
-      (now, drinks, mode) => {
+      (now, drinks, mode, lang) => {
         const offset = now - Date.now();
         const Real = Date;
         class Fake extends Real {
@@ -138,12 +145,13 @@ function statusBar(color) {
         localStorage.setItem("pejling.drinks", JSON.stringify(drinks));
         localStorage.setItem(
           "pejling.settings",
-          JSON.stringify({ weightKg: "80", sex: "m", mode }),
+          JSON.stringify({ weightKg: "80", sex: "m", mode, lang }),
         );
       },
       NOW,
       shot.drinks,
       shot.mode,
+      LANG,
     );
 
     await page.goto(URL + (shot.path ?? "/"), { waitUntil: "networkidle0" });

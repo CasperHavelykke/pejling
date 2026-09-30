@@ -1,25 +1,21 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import {
-  INFO_DISCLAIMER,
-  INFO_DRINKS,
-  infoExplanation,
-  INFO_STORAGE,
-  levelRows,
-} from "../domain/copy";
+import { infoExplanation, levelRows } from "../domain/copy";
 import {
   MAX_WEIGHT_KG,
   MIN_WEIGHT_KG,
   type Body,
   type Sex,
 } from "../domain/widmark";
+import { useLang, useStrings, type Lang } from "../i18n";
 import { colors, fonts, radius } from "../theme/tokens";
 import { BottomPanel } from "./BottomPanel";
 import { Segmented } from "./Segmented";
 
-const SEX_OPTIONS = [
-  { value: "m", label: "Mand" },
-  { value: "f", label: "Kvinde" },
+// Sprogenes egne navne, så de kan findes, uanset hvilket sprog der er valgt.
+const LANG_OPTIONS = [
+  { value: "da", label: "Dansk" },
+  { value: "en", label: "English" },
 ] as const;
 
 function Stepper({
@@ -60,6 +56,7 @@ export function InfoSheet({
   bottomInset,
   onWeight,
   onSex,
+  onLang,
 }: {
   open: boolean;
   onClose: () => void;
@@ -68,8 +65,15 @@ export function InfoSheet({
   bottomInset: number;
   onWeight: (kg: number) => void;
   onSex: (sex: Sex) => void;
+  onLang: (lang: Lang) => void;
 }) {
+  const s = useStrings();
+  const lang = useLang();
   const body: Body = { weightKg, sex };
+  const sexOptions = [
+    { value: "m", label: s.info.male },
+    { value: "f", label: s.info.female },
+  ] as const;
 
   return (
     <BottomPanel
@@ -81,13 +85,13 @@ export function InfoSheet({
         contentContainerStyle={styles.content}
         alwaysBounceVertical={false}
       >
-        <Text style={styles.heading}>Dig</Text>
+        <Text style={styles.heading}>{s.info.you}</Text>
         <View style={styles.you}>
           <View>
-            <Text style={styles.fieldLabel}>Kropsvægt</Text>
+            <Text style={styles.fieldLabel}>{s.info.weight}</Text>
             <View style={styles.weightRow}>
               <Stepper
-                label="Et kilo mindre"
+                label={s.info.kiloLess}
                 symbol="−"
                 disabled={weightKg <= MIN_WEIGHT_KG}
                 onPress={() => onWeight(weightKg - 1)}
@@ -96,7 +100,7 @@ export function InfoSheet({
                 {weightKg} kg
               </Text>
               <Stepper
-                label="Et kilo mere"
+                label={s.info.kiloMore}
                 symbol="+"
                 disabled={weightKg >= MAX_WEIGHT_KG}
                 onPress={() => onWeight(weightKg + 1)}
@@ -104,12 +108,24 @@ export function InfoSheet({
             </View>
           </View>
           <View>
-            <Text style={styles.fieldLabel}>Køn</Text>
+            <Text style={styles.fieldLabel}>{s.info.sex}</Text>
             <View style={styles.sexRow}>
               <Segmented
-                options={SEX_OPTIONS}
+                options={sexOptions}
                 value={sex}
                 onChange={onSex}
+                size="large"
+                background={colors.bg}
+              />
+            </View>
+          </View>
+          <View>
+            <Text style={styles.fieldLabel}>{s.info.language}</Text>
+            <View style={styles.sexRow}>
+              <Segmented
+                options={LANG_OPTIONS}
+                value={lang}
+                onChange={onLang}
                 size="large"
                 background={colors.bg}
               />
@@ -119,13 +135,13 @@ export function InfoSheet({
 
         <View style={styles.rule} />
 
-        <Text style={styles.heading}>Sådan regner Pejling</Text>
+        <Text style={styles.heading}>{s.info.howTitle}</Text>
         <Text style={styles.body}>{infoExplanation(body)}</Text>
-        <Text style={styles.body}>{INFO_DRINKS}</Text>
+        <Text style={styles.body}>{s.infoDrinks}</Text>
 
         <View style={styles.table}>
           <Text style={[styles.tableText, styles.tableHead]}>
-            Aktive genstande
+            {s.info.tableHead}
           </Text>
           {levelRows(body).map(([range, label]) => (
             <View key={range} style={styles.tableRow}>
@@ -135,19 +151,19 @@ export function InfoSheet({
           ))}
         </View>
 
-        <Text style={styles.disclaimer}>{INFO_DISCLAIMER}</Text>
+        <Text style={styles.disclaimer}>{s.infoDisclaimer}</Text>
 
         <View style={styles.rule} />
 
-        <Text style={styles.heading}>Dine data</Text>
-        <Text style={styles.body}>{INFO_STORAGE}</Text>
+        <Text style={styles.heading}>{s.info.dataTitle}</Text>
+        <Text style={styles.body}>{s.infoStorage}</Text>
       </ScrollView>
 
       {/* Ligger uden for rullefeltet, så krydset altid kan nås. */}
       <Pressable
         onPress={onClose}
         accessibilityRole="button"
-        accessibilityLabel="Luk"
+        accessibilityLabel={s.info.close}
         hitSlop={6}
         style={({ pressed }) => [
           styles.close,

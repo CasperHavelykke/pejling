@@ -12,9 +12,16 @@ const H = 130;
 const EYE = 38;
 
 // Ørerne er trekanter, der stikker op bag kroppen. Foden af hver trekant
-// ligger inde under kroppen, så kun spidsen ses.
-const EAR_LEFT = "M9,42 L13,3 L42,17 Z";
-const EAR_RIGHT = "M111,42 L107,3 L78,17 Z";
+// ligger et godt stykke inde under kroppen, så ørets yderkant løber lige
+// ind i kroppens kant uden et hak.
+const EAR_LEFT = "M7,60 L12.4,9 Q13,3 18.4,5.6 L42,17 Z";
+const EAR_RIGHT = "M113,60 L107.6,9 Q107,3 101.6,5.6 L78,17 Z";
+
+// Øjenlågene falder hurtigt i starten og langsommere, jo tættere de er på
+// bunden. Kurven er 1 - (1 - t)², lagt ud i fem punkter.
+const LID_MAX = EYE * 0.62 + 1;
+const LID_STEPS = [0, 0.25, 0.5, 0.75, 1];
+const LID_HEIGHTS = LID_STEPS.map((t) => (1 - (1 - t) ** 2) * LID_MAX);
 
 // Øjets farve: hvidt, når uglen er ædru, og gradvist mere rødsprængt.
 const EYE_CLEAR = "rgb(243, 245, 254)";
@@ -77,8 +84,8 @@ function Eye({
           styles.lid,
           {
             height: t.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, EYE * 0.62 + 1],
+              inputRange: LID_STEPS,
+              outputRange: LID_HEIGHTS,
             }),
           },
         ]}
@@ -203,7 +210,7 @@ const styles = StyleSheet.create({
     top: 58,
     width: 14,
     height: 14,
-    borderRadius: 2,
+    borderRadius: 3.5,
     backgroundColor: colors.owlBeak,
     transform: [{ rotate: "45deg" }],
   },

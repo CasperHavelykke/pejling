@@ -17,16 +17,13 @@ import { Owl } from "../components/Owl";
 import { Segmented } from "../components/Segmented";
 import { SpeechBubble } from "../components/SpeechBubble";
 import { TonightDrawer } from "../components/TonightDrawer";
-import { STATUS, roastFor } from "../domain/copy";
+import { roastFor, statusFor } from "../domain/copy";
 import { daWhole, hhmm, soberLine, unitsX10Label } from "../domain/format";
+import { setLang, useStrings, type Lang } from "../i18n";
 import { usePejling, type Mode } from "../state/usePejling";
+import { saveSetting } from "../storage/store";
 import { mixOklch } from "../theme/color";
 import { colors, fonts, radius, space } from "../theme/tokens";
-
-const MODE_OPTIONS = [
-  { value: "simple", label: "Simpel" },
-  { value: "advanced", label: "Avanceret" },
-] as const;
 
 // Baggrunden glider mod rød: ved fuldt udslag er 85 % af farven rød.
 function useBackground(t: number) {
@@ -57,6 +54,7 @@ function useBackground(t: number) {
 export default function PejlingScreen() {
   const insets = useSafeAreaInsets();
   const p = usePejling();
+  const s = useStrings();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const background = useBackground(p.t);
@@ -64,8 +62,19 @@ export default function PejlingScreen() {
   const sober = soberLine(p.minutesToZero);
   const summary =
     p.tonight.length > 0
-      ? `${unitsX10Label(p.totalX10)} genstande i aften · seneste ${hhmm(p.tonight[0].t)}`
-      : "Ingen genstande endnu";
+      ? s.main.summary(unitsX10Label(p.totalX10), hhmm(p.tonight[0].t))
+      : s.main.nothingYet;
+  const modeOptions = [
+    { value: "simple", label: s.main.simple },
+    { value: "advanced", label: s.main.advanced },
+  ] as const;
+
+  function changeLang(lang: Lang) {
+    setLang(lang);
+    saveSetting("lang", lang).catch((e) => {
+      console.warn("Kunne ikke gemme sprog", e);
+    });
+  }
   const advanced = p.mode === "advanced";
 
   if (!p.ready) {
@@ -90,7 +99,7 @@ export default function PejlingScreen() {
             </Text>
           </View>
           <Segmented<Mode>
-            options={MODE_OPTIONS}
+            options={modeOptions}
             value={p.mode}
             onChange={p.setMode}
           />
@@ -98,7 +107,7 @@ export default function PejlingScreen() {
             <Pressable
               onPress={() => setInfoOpen(true)}
               accessibilityRole="button"
-              accessibilityLabel="Om Pejling og dine indstillinger"
+              accessibilityLabel={s.main.infoButton}
               hitSlop={8}
               style={({ pressed }) => [
                 styles.info,
@@ -130,11 +139,11 @@ export default function PejlingScreen() {
           <View style={[styles.numberBlock, advanced && { marginTop: 12 }]}>
             <Text
               style={styles.number}
-              accessibilityLabel={`${daWhole(p.active)} aktive genstande i kroppen`}
+              accessibilityLabel={`${daWhole(p.active)} ${s.main.activeLabel}`}
             >
               {daWhole(p.active)}
             </Text>
-            <Text style={styles.numberLabel}>aktive genstande i kroppen</Text>
+            <Text style={styles.numberLabel}>{s.main.activeLabel}</Text>
             <StatusLine level={p.level} />
           </View>
 
@@ -151,7 +160,7 @@ export default function PejlingScreen() {
         <Pressable
           onPress={() => setDrawerOpen(true)}
           accessibilityRole="button"
-          accessibilityLabel={`${summary}. Vis listen`}
+          accessibilityLabel={`${summary}. ${s.main.showList}`}
           style={({ pressed }) => [
             styles.handle,
             pressed && { backgroundColor: colors.pressTint },
@@ -184,19 +193,22 @@ export default function PejlingScreen() {
         bottomInset={Math.max(insets.bottom, 12) + 28}
         onWeight={p.setWeight}
         onSex={p.setSex}
+        onLang={changeLang}
       />
     </Animated.View>
   );
 }
+
+const TOP_LEVEL = 5;
 
 // På det højeste trin står "TAG HJEM" med store bogstaver og fed skrift.
 // Resten af linjen er uændret.
 function StatusLine({ level }: { level: number }) {
   // Ved nul siger tallet det hele.
   if (level === 0) return null;
-  const text = STATUS[level];
+  const text = statusFor(level);
   const split = text.indexOf(" – ");
-  if (level < STATUS.length - 1 || split === -1) {
+  if (level < TOP_LEVEL || split === -1) {
     return <Text style={styles.status}>{text}</Text>;
   }
   return (
@@ -236,7 +248,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.muted,
   },
-  middle: { flex: 1 },
+  // Luft ned til knapperne, også når indholdet fylder hele feltet.
+  middle: { flex: 1, marginBottom: 12 },
   middleContent: { flexGrow: 1, alignItems: "center" },
   numberBlock: { alignItems: "center", marginTop: 22, gap: 4 },
   number: {
