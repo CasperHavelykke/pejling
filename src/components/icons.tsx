@@ -3,7 +3,7 @@
 //
 // Ikoner i samme familie deler viewBox, så størrelsesforholdet mellem dem
 // er geometri og ikke noget, der skal justeres pr. knap:
-//   shots     17×26. 2 cl-glassene (14×21) står centreret i rammen.
+//   shots     17×27. 2 cl-glassene (14×21) står centreret i rammen.
 //   cocktails samme ramme om det samme glas; sugerør og pynt rager ud.
 
 import type { ReactNode } from "react";
@@ -172,9 +172,13 @@ function Wine(props: Props) {
 
 // --- Shots ---------------------------------------------------------------
 
-const SHOT_BOX: [number, number, number, number] = [0, 0, 17, 26];
-// 2 cl-glasset (14×21) centreret i 17×26.
-const SHOT_2CL_OFFSET = "translate(1.5,2.5)";
+const SHOT_BOX: [number, number, number, number] = [0, 0, 17, 27];
+// 2 cl-glasset (14×21) centreret i 17×27.
+const SHOT_2CL_OFFSET = "translate(1.5,3)";
+
+// Glassets sider og bund. Siderne buer let udad mod kanten.
+const SHOT_SIDES =
+  "M1.193,7.554C1.193,7.554 1.844,9.061 2.144,10.697C2.453,12.388 2.807,17.721 2.807,17.721L9.193,17.721C9.193,17.721 9.547,12.388 9.856,10.697C10.156,9.061 10.807,7.554 10.807,7.554";
 
 // weight ganger stregtykkelsen op, når glasset tegnes formindsket.
 function Glass2cl({ strong, weight = 1 }: { strong: boolean; weight?: number }) {
@@ -184,7 +188,7 @@ function Glass2cl({ strong, weight = 1 }: { strong: boolean; weight?: number }) 
         transform="matrix(1.20787,0,0,1.67689,-0.441571,-9.71619)"
         strokeWidth={1.37 * weight}
         strokeMiterlimit={1.5}
-        d="M1.193,7.554L2.807,17.721L9.193,17.721L10.807,7.554"
+        d={SHOT_SIDES}
       />
       <Ellipse
         transform="matrix(1.25293,0,0,1.25293,-0.71198,-7.35258)"
@@ -209,12 +213,12 @@ function Glass2cl({ strong, weight = 1 }: { strong: boolean; weight?: number }) 
 
 function Glass4cl({ strong }: { strong: boolean }) {
   return (
-    <>
+    <G transform="translate(0.0099117,0)">
       <Path
-        transform="matrix(1.52573,0,0,2.11817,-0.820931,-12.5362)"
+        transform="matrix(1.52779,0,0,2.12104,-0.833304,-12.5579)"
         strokeWidth={1.08}
         strokeMiterlimit={1.5}
-        d="M1.193,7.554L2.807,17.721L9.193,17.721L10.807,7.554"
+        d={SHOT_SIDES}
       />
       <Ellipse
         transform="matrix(1.58265,0,0,1.58265,-1.1625,-9.55063)"
@@ -236,7 +240,7 @@ function Glass4cl({ strong }: { strong: boolean }) {
           />
         </G>
       )}
-    </>
+    </G>
   );
 }
 
