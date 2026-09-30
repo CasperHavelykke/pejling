@@ -39,7 +39,10 @@
         {
           "backgroundColor": "#14142e",
           "image": "./assets/splash-icon.png",
-          "imageWidth": 220
+          "imageWidth": 220,
+          "android": {
+            "imageWidth": 170
+          }
         }
       ],
       "expo-sqlite",
