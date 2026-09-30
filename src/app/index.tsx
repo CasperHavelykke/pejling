@@ -260,10 +260,11 @@ const styles = StyleSheet.create({
     color: colors.num,
     fontVariant: ["tabular-nums"],
   },
+  // Samme farve som tallet, så de to læses som ét.
   numberLabel: {
     fontFamily: fonts.regular,
     fontSize: 13,
-    color: colors.muted,
+    color: colors.numMuted,
   },
   status: {
     marginTop: 8,

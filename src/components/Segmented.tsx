@@ -43,7 +43,11 @@ export function Segmented<T extends string>({
             <Text
               style={[
                 styles.label,
-                { fontSize: large ? 13 : 12 },
+                // Fast linjehøjde med plads til underlængder som g og p.
+                // Uden den skærer telefonen bunden af bogstaverne.
+                large
+                  ? { fontSize: 13, lineHeight: 18 }
+                  : { fontSize: 12, lineHeight: 16 },
                 { color: on ? colors.segOnFg : colors.muted },
               ]}
             >
@@ -66,7 +70,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
   },
   item: { borderRadius: radius.pill },
-  itemSmall: { paddingVertical: 6, paddingHorizontal: 12 },
-  itemLarge: { paddingVertical: 8, paddingHorizontal: 14 },
+  // Lodret luft er et punkt mindre end før, fordi linjen selv er højere.
+  itemSmall: { paddingVertical: 5, paddingHorizontal: 12 },
+  itemLarge: { paddingVertical: 7, paddingHorizontal: 14 },
   label: { fontFamily: fonts.medium },
 });
