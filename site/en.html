@@ -1,26 +1,15 @@
 <!doctype html>
-<html lang="da">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Pejling – hold øje med aftenen</title>
+    <title>Pejling – keep an eye on the night</title>
     <meta
       name="description"
-      content="Pejling tæller dine genstande og viser, hvor mange der stadig er aktive i kroppen. Ingen konto, og alt ligger på din egen telefon."
+      content="Pejling counts your drinks and shows how many are still active in your body. No account, and everything stays on your own phone."
     />
     <link rel="icon" href="favicon.png" />
-    <link rel="alternate" hreflang="en" href="en.html" />
-    <!-- Samme regel som i appen: dansk til dem, der læser dansk, ellers
-         engelsk. Linket "Dansk" på den engelske side bruger ?da og bliver her. -->
-    <script>
-      (function () {
-        if (location.search.indexOf("da") !== -1) return;
-        var l = (navigator.language || "da").slice(0, 2).toLowerCase();
-        if (["da", "nb", "nn", "no", "sv"].indexOf(l) === -1) {
-          location.replace("en.html");
-        }
-      })();
-    </script>
+    <link rel="alternate" hreflang="da" href="index.html?da" />
     <!-- Stilarket står i selve siden, så den virker uden andre filer. -->
     <style>
       :root {
@@ -161,39 +150,39 @@
     <main>
       <header>
         <img src="icon.png" alt="" />
-        <a href="index.html?da">Pejling</a>
-        <a class="lang" href="en.html" lang="en">English</a>
+        <a href="en.html">Pejling</a>
+        <a class="lang" href="index.html?da" lang="da">Dansk</a>
       </header>
 
-      <h1>Hold øje med aftenen</h1>
+      <h1>Keep an eye on the night</h1>
       <p class="lead">
-        Tryk, hver gang du drikker noget. Pejling viser, hvor mange genstande
-        der stadig er aktive i kroppen, og hvornår det er tid til en pause.
+        Tap every time you have a drink. Pejling shows how many drinks are
+        still active in your body, and when it is time for a break.
       </p>
 
       <ul>
-        <li>Ét tryk pr. øl, vin, drink eller shot.</li>
-        <li>Tallet falder af sig selv, mens kroppen forbrænder.</li>
-        <li>En kalender viser dine tidligere aftener.</li>
-        <li>Ingen konto. Alt ligger på din egen telefon.</li>
+        <li>One tap per beer, wine, cocktail or shot.</li>
+        <li>The number drops by itself as your body burns off the alcohol.</li>
+        <li>A calendar shows your earlier nights.</li>
+        <li>No account. Everything stays on your own phone.</li>
       </ul>
 
       <div class="box">
         <p>
-          Pejling er vejledende. Den måler ikke noget og kan ikke bruges til at
-          vurdere, om du må køre. Appen er kun for voksne.
+          Pejling is a guide only. It does not measure anything and cannot be
+          used to judge whether you may drive. The app is for adults only.
         </p>
       </div>
 
-      <h2 id="support">Hjælp og kontakt</h2>
+      <h2 id="support">Help and contact</h2>
       <p>
-        Har du spørgsmål, fundet en fejl eller et forslag, så skriv til
+        If you have a question, found a bug or have a suggestion, write to
         <a href="mailto:casper.roket@proton.me">casper.roket@proton.me</a>.
       </p>
 
       <footer>
-        <a href="privatliv.html">Privatlivspolitik</a>
-        <a href="privacy.html" lang="en">Privacy Policy</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="privatliv.html" lang="da">Privatlivspolitik</a>
       </footer>
     </main>
   </body>
