@@ -76,19 +76,25 @@ const SHOTS = [
   { name: "01-hovedskaerm", drinks: LIGHT, mode: "simple" },
   { name: "02-avanceret", drinks: LIGHT, mode: "advanced" },
   {
-    name: "03-i-aften",
+    name: "03-tilpasset",
+    drinks: LIGHT,
+    mode: "custom",
+    recents: ["egen:beer:440:55", "egen:wine:150:125", "egen:spirit:40:400"],
+  },
+  {
+    name: "04-i-aften",
     drinks: EVENING,
     mode: "simple",
     click: LANG === "en" ? "Show the list" : "Vis listen",
   },
   {
-    name: "04-historik",
+    name: "05-historik",
     drinks: [...HISTORY, ...EVENING],
     mode: "simple",
     path: "/historik",
     click: LANG === "en" ? "Saturday 19 September" : "lørdag 19. september",
   },
-  { name: "05-tag-hjem", drinks: HEAVY, mode: "simple" },
+  { name: "06-tag-hjem", drinks: HEAVY, mode: "simple" },
 ];
 
 const hex = (r, g, b) =>
@@ -129,7 +135,7 @@ function statusBar(color) {
 
     // Flyt appens ur til lørdag aften, og læg prøvedata ind før første visning.
     await page.evaluateOnNewDocument(
-      (now, drinks, mode, lang) => {
+      (now, drinks, mode, lang, recents) => {
         const offset = now - Date.now();
         const Real = Date;
         class Fake extends Real {
@@ -145,13 +151,20 @@ function statusBar(color) {
         localStorage.setItem("pejling.drinks", JSON.stringify(drinks));
         localStorage.setItem(
           "pejling.settings",
-          JSON.stringify({ weightKg: "80", sex: "m", mode, lang }),
+          JSON.stringify({
+            weightKg: "80",
+            sex: "m",
+            mode,
+            lang,
+            recentCustom: JSON.stringify(recents),
+          }),
         );
       },
       NOW,
       shot.drinks,
       shot.mode,
       LANG,
+      shot.recents ?? [],
     );
 
     await page.goto(URL + (shot.path ?? "/"), { waitUntil: "networkidle0" });
