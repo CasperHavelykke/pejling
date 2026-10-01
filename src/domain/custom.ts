@@ -6,7 +6,7 @@
 // styrke står i tiendedele, så nøglen kun indeholder heltal. Dermed kræves
 // der ingen ændring af databasen.
 
-import { GRAMS_PER_UNIT } from "./widmark";
+import { GRAMS_PER_UNIT, burnUnitsPerHour, type Body } from "./widmark";
 
 export type CustomType = "beer" | "wine" | "spirit";
 
@@ -49,6 +49,14 @@ const MAX_RECENT = 3;
 export function customUnitsX10({ cl, abv }: Pick<CustomDrink, "cl" | "abv">): number {
   const grams = cl * 10 * (abv / 100) * ETHANOL_GRAMS_PER_ML;
   return Math.max(1, Math.round((grams / GRAMS_PER_UNIT) * 10));
+}
+
+// Hvor længe kroppen bruger på så mange genstande, i minutter. Rundet til
+// fem minutter, for tallet er et skøn og skal ikke se mere præcist ud, end
+// det er.
+export function burnMinutes(unitsX10: number, body: Body): number {
+  const minutes = (unitsX10 / 10 / burnUnitsPerHour(body)) * 60;
+  return Math.max(5, Math.round(minutes / 5) * 5);
 }
 
 export function customKind({ type, cl, abv }: CustomDrink): string {

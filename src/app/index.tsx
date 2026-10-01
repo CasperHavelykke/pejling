@@ -244,6 +244,7 @@ export default function PejlingScreen() {
           page={page}
           labels={[s.main.simple, s.main.advanced, s.custom.page]}
           recents={p.recents}
+          body={{ weightKg: p.weightKg, sex: p.sex }}
           onRemoveRecent={p.removeRecent}
           onPage={(i) => p.setMode(PAGES[i])}
           onAdd={p.add}

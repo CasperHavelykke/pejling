@@ -149,6 +149,8 @@ export const da: Strings = {
     weaker: "Svagere",
     stronger: "Stærkere",
     add: (units, n) => `Tilføj · ${units} ${n === 1 ? "genstand" : "genstande"}`,
+    burnTime: (h, m) =>
+      `Kroppen bruger ca. ${h ? `${h} t ` : ""}${m ? `${m} min ` : ""}på den`,
     recent: "Seneste",
     recentHint: "Hold nede for at fjerne fra Seneste",
     recentEmpty: "Dine seneste valg kommer til at stå her",

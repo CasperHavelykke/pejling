@@ -1,4 +1,5 @@
 import {
+  burnMinutes,
   CUSTOM_DEFAULTS,
   CUSTOM_TYPES,
   atSizeLimit,
@@ -36,6 +37,26 @@ describe("omregning til genstande", () => {
 
   test("et tryk tæller altid mindst 0,1", () => {
     expect(customUnitsX10({ cl: 1, abv: 0.5 })).toBe(1);
+  });
+});
+
+describe("hvor længe kroppen bruger på en genstand", () => {
+  const man80 = { weightKg: 80, sex: "m" } as const;
+  const woman60 = { weightKg: 60, sex: "f" } as const;
+
+  test("følger forbrændingen for vægt og køn", () => {
+    // En mand på 80 kg forbrænder ca. 0,7 genstande i timen.
+    expect(burnMinutes(10, man80)).toBe(90);
+    expect(burnMinutes(20, man80)).toBe(175);
+    // En lettere kvinde bruger længere tid på det samme.
+    expect(burnMinutes(10, woman60)).toBeGreaterThan(burnMinutes(10, man80));
+  });
+
+  test("rundes til fem minutter og er aldrig nul", () => {
+    for (const x10 of [1, 5, 7, 12, 16, 23]) {
+      expect(burnMinutes(x10, man80) % 5).toBe(0);
+      expect(burnMinutes(x10, man80)).toBeGreaterThanOrEqual(5);
+    }
   });
 });
 

@@ -70,6 +70,8 @@ export type Strings = {
     weaker: string;
     stronger: string;
     add: (units: string, count: number) => string;
+    // Står under teksten på knappen. Taler om genstanden, ikke om personen.
+    burnTime: (hours: number, minutes: number) => string;
     recent: string;
     // Læses op af skærmlæsere på knapperne under Seneste.
     recentHint: string;

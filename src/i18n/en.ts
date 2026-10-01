@@ -146,6 +146,8 @@ export const en: Strings = {
     weaker: "Weaker",
     stronger: "Stronger",
     add: (units, n) => `Add · ${units} ${n === 1 ? "drink" : "drinks"}`,
+    burnTime: (h, m) =>
+      `Takes your body about ${h ? `${h} h ` : ""}${m ? `${m} min ` : ""}to burn off`,
     recent: "Recent",
     recentHint: "Press and hold to remove from Recent",
     recentEmpty: "Your recent choices will show up here",

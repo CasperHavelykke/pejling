@@ -11,6 +11,7 @@ import {
   CUSTOM_TYPES,
   atSizeLimit,
   atStrengthLimit,
+  burnMinutes,
   customKind,
   customUnitsX10,
   parseCustom,
@@ -21,6 +22,7 @@ import {
 import { customName } from "../domain/drinks";
 import { daWhole, unitsX10Label } from "../domain/format";
 import { useStrings } from "../i18n";
+import type { Body } from "../domain/widmark";
 import type { Entry } from "../state/usePejling";
 import { colors, fonts, radius } from "../theme/tokens";
 import { DrinkIcon } from "./icons";
@@ -117,11 +119,14 @@ function StepButton({
 
 export function CustomPanel({
   recents,
+  body,
   onAdd,
   onRemoveRecent,
 }: {
   // De seneste egne indtastninger, nyeste først.
   recents: readonly string[];
+  // Vægt og køn, til skønnet over hvor længe kroppen bruger på genstanden.
+  body: Body;
   onAdd: (entry: Entry) => void;
   // Et langt tryk på en knap under Seneste fjerner den fra rækken.
   onRemoveRecent: (kind: string) => void;
@@ -132,6 +137,7 @@ export function CustomPanel({
   const [values, setValues] = useState(CUSTOM_DEFAULTS);
   const { cl, abv } = values[type];
   const unitsX10 = customUnitsX10({ cl, abv });
+  const burn = burnMinutes(unitsX10, body);
 
   // Et langt tryk mærker knappen, og den fjernes først, når fingeren
   // slippes. Ellers ville naboknappen rykke ind under fingeren og kunne
@@ -205,6 +211,11 @@ export function CustomPanel({
       >
         <Text style={styles.addText}>
           {s.custom.add(unitsX10Label(unitsX10), unitsX10 / 10)}
+        </Text>
+        {/* Ændrer sig med plus og minus, så man kan se, hvad en genstand
+            koster i tid, uden at logge den. */}
+        <Text style={styles.addSub} numberOfLines={1}>
+          {s.custom.burnTime(Math.floor(burn / 60), burn % 60)}
         </Text>
       </Pressable>
 
@@ -399,9 +410,10 @@ const styles = StyleSheet.create({
     fontVariant: ["tabular-nums"],
   },
   add: {
-    minHeight: 48,
+    minHeight: 50,
     alignItems: "center",
     justifyContent: "center",
+    paddingVertical: 6,
     paddingHorizontal: 12,
     backgroundColor: colors.btnBg,
     borderWidth: 1,
@@ -417,5 +429,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 20,
     color: colors.btnFg,
+  },
+  addSub: {
+    fontFamily: fonts.regular,
+    fontSize: 11,
+    lineHeight: 15,
+    color: colors.btnSub,
   },
 });

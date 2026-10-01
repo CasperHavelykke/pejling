@@ -16,6 +16,7 @@ import {
   type NativeScrollEvent,
   type NativeSyntheticEvent,
 } from "react-native";
+import type { Body } from "../domain/widmark";
 import type { Entry } from "../state/usePejling";
 import { colors, space } from "../theme/tokens";
 import { CustomPanel } from "./CustomPanel";
@@ -29,6 +30,7 @@ export function DrinkPager({
   page,
   labels,
   recents,
+  body,
   onRemoveRecent,
   onPage,
   onAdd,
@@ -48,6 +50,8 @@ export function DrinkPager({
   labels: readonly string[];
   // De seneste egne indtastninger, til det tredje panel.
   recents: readonly string[];
+  // Vægt og køn, til det tredje panel.
+  body: Body;
   onRemoveRecent: (kind: string) => void;
   onPage: (page: number) => void;
   onAdd: (entry: Entry) => void;
@@ -83,6 +87,7 @@ export function DrinkPager({
     <CustomPanel
       key="custom"
       recents={recents}
+      body={body}
       onAdd={onAdd}
       onRemoveRecent={onRemoveRecent}
     />,
