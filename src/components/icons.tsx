@@ -1,13 +1,14 @@
-// Ikoner til knapperne. De håndtegnede er Caspers egne (Affinity-eksport),
-// resten er Lucide. Stregen følger den farve, der gives med.
+// Ikoner til knapperne. Flasken og pynten på cocktails er Caspers egne
+// (Affinity-eksport), shotglassene er tegnet til appen, og resten er Lucide.
+// Stregen følger den farve, der gives med.
 //
 // Ikoner i samme familie deler viewBox, så størrelsesforholdet mellem dem
 // er geometri og ikke noget, der skal justeres pr. knap:
-//   shots     17×27. 2 cl-glassene (14×21) står centreret i rammen.
-//   cocktails samme ramme om det samme glas; sugerør og pynt rager ud.
+//   shots     24×24. 2 cl-glasset er lavt, 4 cl-glasset højt, samme bund.
+//   cocktails fælles ramme om det samme glas; sugerør og pynt rager ud.
 
 import type { ReactNode } from "react";
-import Svg, { Ellipse, G, Path } from "react-native-svg";
+import Svg, { G, Path } from "react-native-svg";
 import type { DrinkIconKey } from "../domain/drinks";
 
 type Props = { height: number; color: string };
@@ -172,104 +173,56 @@ function Wine(props: Props) {
 
 // --- Shots ---------------------------------------------------------------
 
-const SHOT_BOX: [number, number, number, number] = [0, 0, 17, 27];
-// 2 cl-glasset (14×21) centreret i 17×27.
-const SHOT_2CL_OFFSET = "translate(1.5,3)";
+// Shotglas i samme gitter og streg som vinglasset og cocktailglasset (24×24,
+// streg 2). Glasset har lige, skrå sider og en tyk bund.
+//
+// Alm. og Stærk er hinandens modsætning: på Alm. er bunden farvet ind og
+// indholdet tomt, på Stærk er indholdet farvet ind helt op til kanten og
+// bunden tom. 2 cl er et lavt glas, 4 cl et højere.
+type ShotShape = {
+  glass: string;
+  // Den farvede flade.
+  fill: string;
+  // Stregen mellem indhold og bund, kun på Stærk.
+  line?: string;
+};
 
-// Glassets sider og bund. Siderne buer let udad mod kanten.
-const SHOT_SIDES =
-  "M1.193,7.554C1.193,7.554 1.844,9.061 2.144,10.697C2.453,12.388 2.807,17.721 2.807,17.721L9.193,17.721C9.193,17.721 9.547,12.388 9.856,10.697C10.156,9.061 10.807,7.554 10.807,7.554";
+const SHOT_2CL: ShotShape = {
+  glass: "M7.6 9h8.8l-1 10.1a1 1 0 0 1-1 .9H9.6a1 1 0 0 1-1-.9z",
+  fill: "M8.41 17.2H15.59L15.4 19.1a1 1 0 0 1-1 .9H9.6a1 1 0 0 1-1-.9z",
+};
 
-// weight ganger stregtykkelsen op, når glasset tegnes formindsket.
-function Glass2cl({ strong, weight = 1 }: { strong: boolean; weight?: number }) {
+const SHOT_2CL_STRONG: ShotShape = {
+  glass: SHOT_2CL.glass,
+  fill: "M7.6 9H16.4L15.73 15.8H8.27z",
+  line: "M8.3 15.8h7.4",
+};
+
+const SHOT_4CL: ShotShape = {
+  glass: "M6 4h12l-1.4 15.1a1 1 0 0 1-1 .9H8.4a1 1 0 0 1-1-.9z",
+  fill: "M7.11 16H16.89L16.6 19.1a1 1 0 0 1-1 .9H8.4a1 1 0 0 1-1-.9z",
+};
+
+const SHOT_4CL_STRONG: ShotShape = {
+  glass: SHOT_4CL.glass,
+  fill: "M6 4H18L16.89 16H7.11z",
+  line: "M7.1 16h9.8",
+};
+
+// Simpel-knappens shot: et glas midt imellem de to størrelser.
+const SHOT_SIMPLE: ShotShape = {
+  glass: "M6.6 6.5h10.8l-1.2 12.6a1 1 0 0 1-1 .9H8.8a1 1 0 0 1-1-.9z",
+  fill: "M7.5 16H16.5L16.2 19.1a1 1 0 0 1-1 .9H8.8a1 1 0 0 1-1-.9z",
+};
+
+function Shot({ shape, ...props }: Props & { shape: ShotShape }) {
   return (
-    <>
-      <Path
-        transform="matrix(1.20787,0,0,1.67689,-0.441571,-9.71619)"
-        strokeWidth={1.37 * weight}
-        strokeMiterlimit={1.5}
-        d={SHOT_SIDES}
-      />
-      <Ellipse
-        transform="matrix(1.25293,0,0,1.25293,-0.71198,-7.35258)"
-        strokeWidth={1.6 * weight}
-        cx={6}
-        cy={8.223}
-        rx={4.634}
-        ry={1.557}
-      />
-      {strong && (
-        <G strokeWidth={2}>
-          <Path d="M4.656,11.318L9.093,11.318" />
-          <Path
-            transform="matrix(0,1,-1,0,18.1929,4.44367)"
-            d="M4.656,11.318L9.093,11.318"
-          />
-        </G>
-      )}
-    </>
-  );
-}
-
-function Glass4cl({ strong }: { strong: boolean }) {
-  return (
-    <G transform="translate(0.0099117,0)">
-      <Path
-        transform="matrix(1.52779,0,0,2.12104,-0.833304,-12.5579)"
-        strokeWidth={1.08}
-        strokeMiterlimit={1.5}
-        d={SHOT_SIDES}
-      />
-      <Ellipse
-        transform="matrix(1.58265,0,0,1.58265,-1.1625,-9.55063)"
-        strokeWidth={1.26}
-        cx={6}
-        cy={8.223}
-        rx={4.634}
-        ry={1.557}
-      />
-      {strong && (
-        <G strokeWidth={2}>
-          <Path
-            transform="matrix(1,0,0,1,0.158685,0)"
-            d="M4.989,14.038L11.361,14.038"
-          />
-          <Path
-            transform="matrix(0,1,-1,0,22.371,5.86282)"
-            d="M4.989,14.038L11.361,14.038"
-          />
-        </G>
-      )}
-    </G>
-  );
-}
-
-function Shot2cl({ strong, ...props }: Props & { strong: boolean }) {
-  return (
-    <Frame viewBox={SHOT_BOX} {...props}>
-      <G transform={SHOT_2CL_OFFSET}>
-        <Glass2cl strong={strong} />
+    <Frame viewBox={[0, 0, 24, 24]} {...props}>
+      <G strokeWidth={2}>
+        <Path d={shape.glass} />
+        {shape.line && <Path d={shape.line} />}
+        <Path d={shape.fill} fill={props.color} />
       </G>
-    </Frame>
-  );
-}
-
-function Shot4cl({ strong, ...props }: Props & { strong: boolean }) {
-  return (
-    <Frame viewBox={SHOT_BOX} {...props}>
-      <Glass4cl strong={strong} />
-    </Frame>
-  );
-}
-
-// Simpel-knappens shot: glasset fylder kun den nederste halvdel af rammen,
-// så det læses som et lille shotglas ved siden af flasken og cocktailglasset
-// og står på samme bundlinje som dem. Stregen er gjort tykkere, så den
-// matcher de to andre ikoner efter formindskelsen.
-function ShotSimple(props: Props) {
-  return (
-    <Frame viewBox={[-7, -21, 28, 42]} {...props}>
-      <Glass2cl strong={false} weight={1.8} />
     </Frame>
   );
 }
@@ -298,15 +251,15 @@ export function DrinkIcon({
     case "wine":
       return <Wine {...p} />;
     case "shot":
-      return <ShotSimple {...p} />;
+      return <Shot shape={SHOT_SIMPLE} {...p} />;
     case "shot2":
-      return <Shot2cl strong={false} {...p} />;
+      return <Shot shape={SHOT_2CL} {...p} />;
     case "shot2Strong":
-      return <Shot2cl strong {...p} />;
+      return <Shot shape={SHOT_2CL_STRONG} {...p} />;
     case "shot4":
-      return <Shot4cl strong={false} {...p} />;
+      return <Shot shape={SHOT_4CL} {...p} />;
     case "shot4Strong":
-      return <Shot4cl strong {...p} />;
+      return <Shot shape={SHOT_4CL_STRONG} {...p} />;
   }
 }
 
