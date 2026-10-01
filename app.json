@@ -46,7 +46,15 @@
         }
       ],
       "expo-sqlite",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#9b6cf5",
+          "enableBackgroundRemoteNotifications": false
+        }
+      ]
     ],
     "extra": {
       "router": {},

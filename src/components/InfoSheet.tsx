@@ -55,8 +55,11 @@ export function InfoSheet({
   sex,
   bottomInset,
   onWeight,
+  reminders,
+  remindersDenied,
   onSex,
   onLang,
+  onReminders,
 }: {
   open: boolean;
   onClose: () => void;
@@ -66,10 +69,18 @@ export function InfoSheet({
   onWeight: (kg: number) => void;
   onSex: (sex: Sex) => void;
   onLang: (lang: Lang) => void;
+  reminders: boolean;
+  // Telefonen sagde nej, da påmindelser blev slået til.
+  remindersDenied: boolean;
+  onReminders: (on: boolean) => void;
 }) {
   const s = useStrings();
   const lang = useLang();
   const body: Body = { weightKg, sex };
+  const reminderOptions = [
+    { value: "off", label: s.info.off },
+    { value: "on", label: s.info.on },
+  ] as const;
   const sexOptions = [
     { value: "m", label: s.info.male },
     { value: "f", label: s.info.female },
@@ -131,6 +142,22 @@ export function InfoSheet({
               />
             </View>
           </View>
+        </View>
+
+        <View>
+          <Text style={styles.fieldLabel}>{s.info.reminders}</Text>
+          <View style={styles.sexRow}>
+            <Segmented
+              options={reminderOptions}
+              value={reminders ? "on" : "off"}
+              onChange={(v) => onReminders(v === "on")}
+              size="large"
+              background={colors.bg}
+            />
+          </View>
+          <Text style={styles.help}>
+            {remindersDenied ? s.info.remindersDenied : s.info.remindersHelp}
+          </Text>
         </View>
 
         <View style={styles.rule} />
@@ -230,6 +257,13 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   sexRow: { flexDirection: "row", height: 40, alignItems: "center" },
+  help: {
+    marginTop: 6,
+    fontFamily: fonts.regular,
+    fontSize: 12,
+    lineHeight: 18,
+    color: colors.muted,
+  },
   rule: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: colors.divider,

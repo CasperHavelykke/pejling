@@ -80,6 +80,14 @@ export type Strings = {
     // Navnet i listen "I aften", fx "Øl 44 cl 5,5 %".
     name: (type: string, cl: string, abv: string) => string;
   };
+  // Påmindelsen om at logge. Den må spørge, men aldrig opfordre til at
+  // drikke.
+  reminder: {
+    // Navnet på kanalen i Androids indstillinger.
+    channel: string;
+    title: string;
+    body: string;
+  };
   drawer: {
     title: string;
     close: string;
@@ -97,6 +105,12 @@ export type Strings = {
     male: string;
     female: string;
     language: string;
+    reminders: string;
+    off: string;
+    on: string;
+    remindersHelp: string;
+    // Vises, hvis telefonen har sagt nej til notifikationer.
+    remindersDenied: string;
     howTitle: string;
     tableHead: string;
     dataTitle: string;

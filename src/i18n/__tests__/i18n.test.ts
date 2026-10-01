@@ -38,6 +38,7 @@ function allText(s: Strings): string[] {
     s.custom.stronger,
     s.custom.recent,
     s.custom.recentEmpty,
+    ...Object.values(s.reminder),
     s.custom.recentHint,
     s.custom.add("1", 1),
     s.custom.add("2", 2),

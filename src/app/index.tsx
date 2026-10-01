@@ -97,6 +97,7 @@ export default function PejlingScreen() {
   const s = useStrings();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
+  const [remindersDenied, setRemindersDenied] = useState(false);
   const background = useBackground(p.t);
   const window = useWindowDimensions();
   const width = window.width;
@@ -148,6 +149,10 @@ export default function PejlingScreen() {
     p.tonight.length > 0
       ? s.main.summary(unitsX10Label(p.totalX10), hhmm(p.tonight[0].t))
       : s.main.nothingYet;
+
+  function changeReminders(on: boolean) {
+    p.setReminders(on).then((ok) => setRemindersDenied(on && !ok));
+  }
 
   function changeLang(lang: Lang) {
     setLang(lang);
@@ -281,6 +286,9 @@ export default function PejlingScreen() {
         onWeight={p.setWeight}
         onSex={p.setSex}
         onLang={changeLang}
+        reminders={p.reminders}
+        remindersDenied={remindersDenied}
+        onReminders={changeReminders}
       />
     </Animated.View>
   );

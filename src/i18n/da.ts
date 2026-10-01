@@ -155,6 +155,11 @@ export const da: Strings = {
     percent: (n) => `${n} %`,
     name: (type, cl, abv) => `${type} ${cl} cl ${abv} %`,
   },
+  reminder: {
+    channel: "Påmindelser",
+    title: "Pejling",
+    body: "Har du fået noget siden sidst? Husk at logge det!",
+  },
   drawer: {
     title: "I aften",
     close: "Luk listen",
@@ -172,6 +177,13 @@ export const da: Strings = {
     male: "Mand",
     female: "Kvinde",
     language: "Sprog",
+    reminders: "Påmindelser",
+    off: "Fra",
+    on: "Til",
+    remindersHelp:
+      "Pejling minder dig om at logge en time efter din seneste indtastning, så længe der er aktive genstande.",
+    remindersDenied:
+      "Pejling har ikke lov til at vise notifikationer. Giv lov i telefonens indstillinger, og prøv igen.",
     howTitle: "Sådan regner Pejling",
     tableHead: "Aktive genstande",
     dataTitle: "Dine data",

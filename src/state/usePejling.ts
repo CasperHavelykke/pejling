@@ -7,6 +7,7 @@ import {
   readRecents,
 } from "../domain/custom";
 import type { DrinkLog } from "../domain/drinks";
+import { REMINDER_INTERVAL_MS, reminderTimes } from "../domain/reminders";
 import {
   DEFAULT_WEIGHT_KG,
   activeUnits,
@@ -27,6 +28,12 @@ import {
   saveSetting,
   updateDrinkBodies,
 } from "../storage/store";
+import { strings, useLang } from "../i18n";
+import {
+  clearShownReminders,
+  requestReminderPermission,
+  setReminders,
+} from "../notifications/reminders";
 
 // Knappanelerne: faste knapper i to udgaver og egen indtastning.
 export type Mode = "simple" | "advanced" | "custom";
@@ -37,6 +44,12 @@ const MODES: readonly Mode[] = ["simple", "advanced", "custom"];
 export type Entry = { kind: string; unitsX10: number };
 
 const TICK_MS = 30_000;
+// Under udvikling og i prøvebyg (profilen "preview" i eas.json) kommer
+// påmindelserne efter to minutter i stedet for en time, så de kan afprøves
+// uden at vente. Byg til butikkerne bruger altid en time.
+const REMINDER_TEST =
+  __DEV__ || process.env.EXPO_PUBLIC_REMINDER_TEST === "1";
+const REMINDER_GAP_MS = REMINDER_TEST ? 2 * 60_000 : REMINDER_INTERVAL_MS;
 // En aften rækker aldrig længere tilbage end dette i praksis.
 const LOOKBACK_MS = 7 * 24 * 3_600_000;
 
@@ -51,6 +64,9 @@ export function usePejling() {
   const [mode, setModeState] = useState<Mode>("simple");
   // De seneste egne indtastninger, nyeste først.
   const [recents, setRecents] = useState<string[]>([]);
+  // Om brugeren har slået påmindelser til.
+  const [reminders, setRemindersState] = useState(false);
+  const lang = useLang();
   const [now, setNow] = useState(() => Date.now());
   // Skrivninger køres i rækkefølge, så fortryd aldrig overhaler tilføj.
   const queue = useRef<Promise<unknown>>(Promise.resolve());
@@ -73,6 +89,7 @@ export function usePejling() {
         const savedMode = MODES.find((m) => m === settings.mode);
         if (savedMode) setModeState(savedMode);
         setRecents(readRecents(settings.recentCustom));
+        setRemindersState(settings.reminders === "on");
         setLogs(drinks);
       } catch (e) {
         console.warn("Kunne ikke læse gemte data", e);
@@ -90,7 +107,10 @@ export function usePejling() {
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), TICK_MS);
     const sub = AppState.addEventListener("change", (state) => {
-      if (state === "active") setNow(Date.now());
+      if (state !== "active") return;
+      setNow(Date.now());
+      // Påmindelser, der allerede er vist, er overflødige nu.
+      clearShownReminders().catch(() => {});
     });
     return () => {
       clearInterval(timer);
@@ -202,6 +222,23 @@ export function usePejling() {
     [enqueue],
   );
 
+  // Slår påmindelser til eller fra. Svarer falsk, hvis telefonen ikke giver
+  // lov, og så forbliver de slået fra.
+  const setRemindersOn = useCallback(
+    async (next: boolean): Promise<boolean> => {
+      if (next) {
+        const allowed = await requestReminderPermission(
+          strings().reminder.channel,
+        ).catch(() => false);
+        if (!allowed) return false;
+      }
+      setRemindersState(next);
+      enqueue(() => saveSetting("reminders", next ? "on" : "off"));
+      return true;
+    },
+    [enqueue],
+  );
+
   const derived = useMemo(() => {
     const body: Body = { weightKg, sex };
     const tonight = currentSession(logs, now, body);
@@ -217,10 +254,34 @@ export function usePejling() {
     };
   }, [logs, now, weightKg, sex]);
 
+  // Planlagte påmindelser følger aftenens indtastninger: hver ny, fortrudt
+  // eller ændret indtastning regner tiderne forfra. Tallet til nul læses i
+  // det øjeblik og indgår ikke som afhængighed, for det ændrer sig hele tiden.
+  const lastEntryAt = derived.tonight[0]?.t ?? null;
+  const entryCount = derived.tonight.length;
+  const minutesLeft = useRef(derived.minutesToZero);
+  minutesLeft.current = derived.minutesToZero;
+  useEffect(() => {
+    if (!ready) return;
+    const text = strings().reminder;
+    const times = reminders
+      ? reminderTimes({
+          lastEntryAt,
+          now: Date.now(),
+          minutesToZero: minutesLeft.current,
+          intervalMs: REMINDER_GAP_MS,
+        })
+      : [];
+    setReminders(times, text).catch((e) => {
+      console.warn("Kunne ikke planlægge påmindelser", e);
+    });
+  }, [ready, reminders, lastEntryAt, entryCount, weightKg, sex, lang]);
+
   return {
     ready,
     mode,
     recents,
+    reminders,
     weightKg,
     sex,
     ...derived,
@@ -230,5 +291,6 @@ export function usePejling() {
     setWeight,
     setSex,
     setMode,
+    setReminders: setRemindersOn,
   };
 }

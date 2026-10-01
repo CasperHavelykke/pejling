@@ -152,6 +152,11 @@ export const en: Strings = {
     percent: (n) => `${n}%`,
     name: (type, cl, abv) => `${type} ${cl} cl ${abv}%`,
   },
+  reminder: {
+    channel: "Reminders",
+    title: "Pejling",
+    body: "Had anything since last time? Remember to log it!",
+  },
   drawer: {
     title: "Tonight",
     close: "Close the list",
@@ -169,6 +174,13 @@ export const en: Strings = {
     male: "Male",
     female: "Female",
     language: "Language",
+    reminders: "Reminders",
+    off: "Off",
+    on: "On",
+    remindersHelp:
+      "Pejling reminds you to log one hour after your latest entry, as long as there are active drinks.",
+    remindersDenied:
+      "Pejling is not allowed to show notifications. Allow it in your phone's settings and try again.",
     howTitle: "How Pejling calculates",
     tableHead: "Active drinks",
     dataTitle: "Your data",

@@ -5,7 +5,10 @@
   },
   "build": {
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_REMINDER_TEST": "1"
+      }
     },
     "production": {
       "autoIncrement": true
