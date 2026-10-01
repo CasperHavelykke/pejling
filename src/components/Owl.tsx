@@ -94,9 +94,15 @@ function Eye({
   );
 }
 
-export function Owl({ t, scale }: { t: number; scale: number }) {
+export function Owl({
+  t,
+  scale: as,
+}: {
+  t: number;
+  // Animeret, så uglen kan følge fingeren, når knappanelet swipes.
+  scale: Animated.AnimatedInterpolation<number>;
+}) {
   const at = useAnimatedTo(t, 500);
-  const as = useAnimatedTo(scale, 300);
   const cheek = at.interpolate({
     inputRange: [0, 0.625, 1],
     outputRange: [0, 1, 1],

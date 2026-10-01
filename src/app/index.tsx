@@ -6,15 +6,15 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Chevron } from "../components/Chevron";
-import { AdvancedButtons, SimpleButtons } from "../components/DrinkButtons";
+import { DrinkPager } from "../components/DrinkPager";
 import { InfoSheet } from "../components/InfoSheet";
 import { Owl } from "../components/Owl";
-import { Segmented } from "../components/Segmented";
 import { SpeechBubble } from "../components/SpeechBubble";
 import { TonightDrawer } from "../components/TonightDrawer";
 import { roastFor, statusFor } from "../domain/copy";
@@ -24,6 +24,16 @@ import { usePejling, type Mode } from "../state/usePejling";
 import { saveSetting } from "../storage/store";
 import { mixOklch } from "../theme/color";
 import { colors, fonts, radius, space } from "../theme/tokens";
+
+// Knappanelerne i den rækkefølge, de swipes i.
+const PAGES: readonly Mode[] = ["simple", "advanced"];
+
+// Uglens højde i punkter ved skala 1.
+const OWL_HEIGHT = 130;
+
+function clamp(n: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, n));
+}
 
 // Baggrunden glider mod rød: ved fuldt udslag er 85 % af farven rød.
 function useBackground(t: number) {
@@ -58,16 +68,29 @@ export default function PejlingScreen() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const background = useBackground(p.t);
+  const { width, height } = useWindowDimensions();
+  // Knappanelets vandrette position. Ugle og luft følger den, så skærmen
+  // glider mellem de to opstillinger, mens man swiper.
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const between = (simple: number, advanced: number) =>
+    scrollX.interpolate({
+      inputRange: [0, width],
+      outputRange: [simple, advanced],
+      extrapolate: "clamp",
+    });
+  // Uglen får den plads, der er tilbage, når tekst og knapper har fået
+  // deres. Tallene er højden af alt andet på skærmen i de to opstillinger.
+  const usable = height - insets.top - insets.bottom;
+  const owlSimple = clamp((usable - 570) / OWL_HEIGHT, 0.75, 1.35);
+  const owlAdvanced = clamp((usable - 645) / OWL_HEIGHT, 0.32, 0.9);
+  // På de mindste skærme får Avanceret også mindre luft mellem delene.
+  const tight = usable < 700;
 
   const sober = soberLine(p.minutesToZero);
   const summary =
     p.tonight.length > 0
       ? s.main.summary(unitsX10Label(p.totalX10), hhmm(p.tonight[0].t))
       : s.main.nothingYet;
-  const modeOptions = [
-    { value: "simple", label: s.main.simple },
-    { value: "advanced", label: s.main.advanced },
-  ] as const;
 
   function changeLang(lang: Lang) {
     setLang(lang);
@@ -75,7 +98,6 @@ export default function PejlingScreen() {
       console.warn("Kunne ikke gemme sprog", e);
     });
   }
-  const advanced = p.mode === "advanced";
 
   if (!p.ready) {
     return <View style={[styles.root, { backgroundColor: colors.bg }]} />;
@@ -98,11 +120,6 @@ export default function PejlingScreen() {
               Pejling
             </Text>
           </View>
-          <Segmented<Mode>
-            options={modeOptions}
-            value={p.mode}
-            onChange={p.setMode}
-          />
           <View style={[styles.topSide, styles.topRight]}>
             <Pressable
               onPress={() => setInfoOpen(true)}
@@ -125,18 +142,21 @@ export default function PejlingScreen() {
           alwaysBounceVertical={false}
           showsVerticalScrollIndicator={false}
         >
-          <SpeechBubble
-            text={roastFor(p.level, p.tonight.length)}
-            compact={advanced}
-          />
-
-          {/* I Avanceret fylder knapperne tre rækker. Ugle og luft er gjort
+          {/* I Avanceret fylder knapperne tre rækker. Ugle og luft bliver
               mindre, så statuslinjen ikke bliver skåret af på små skærme. */}
-          <View style={{ marginTop: advanced ? 6 : 22 }}>
-            <Owl t={p.t} scale={advanced ? 0.6 : 1.35} />
-          </View>
+          <Animated.View
+            style={[styles.bubble, { marginTop: between(28, tight ? 8 : 14) }]}
+          >
+            <SpeechBubble text={roastFor(p.level, p.tonight.length)} />
+          </Animated.View>
 
-          <View style={[styles.numberBlock, advanced && { marginTop: 12 }]}>
+          <Animated.View style={{ marginTop: between(22, tight ? 2 : 6) }}>
+            <Owl t={p.t} scale={between(owlSimple, owlAdvanced)} />
+          </Animated.View>
+
+          <Animated.View
+            style={[styles.numberBlock, { marginTop: between(22, tight ? 6 : 12) }]}
+          >
             <Text
               style={styles.number}
               accessibilityLabel={`${daWhole(p.active)} ${s.main.activeLabel}`}
@@ -145,17 +165,20 @@ export default function PejlingScreen() {
             </Text>
             <Text style={styles.numberLabel}>{s.main.activeLabel}</Text>
             <StatusLine level={p.level} />
-          </View>
+          </Animated.View>
 
           {/* Hvornår tallet når nul, står i bunden af listen "I aften". */}
           <View style={styles.spacer} />
         </ScrollView>
 
-        {advanced ? (
-          <AdvancedButtons onAdd={p.add} />
-        ) : (
-          <SimpleButtons onAdd={p.add} />
-        )}
+        <DrinkPager
+          scrollX={scrollX}
+          width={width}
+          page={Math.max(0, PAGES.indexOf(p.mode))}
+          labels={[s.main.simple, s.main.advanced]}
+          onPage={(i) => p.setMode(PAGES[i])}
+          onAdd={p.add}
+        />
 
         <Pressable
           onPress={() => setDrawerOpen(true)}
@@ -227,6 +250,7 @@ const styles = StyleSheet.create({
   topbar: { flexDirection: "row", alignItems: "center", gap: 10 },
   topSide: { flex: 1 },
   topRight: { alignItems: "flex-end" },
+  bubble: { alignSelf: "stretch" },
   brand: {
     fontFamily: fonts.wordmark,
     fontSize: 20,
@@ -251,7 +275,7 @@ const styles = StyleSheet.create({
   // Luft ned til knapperne, også når indholdet fylder hele feltet.
   middle: { flex: 1, marginBottom: 12 },
   middleContent: { flexGrow: 1, alignItems: "center" },
-  numberBlock: { alignItems: "center", marginTop: 22, gap: 4 },
+  numberBlock: { alignItems: "center", gap: 4 },
   number: {
     fontFamily: fonts.medium,
     fontSize: 72,
@@ -281,7 +305,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "center",
     gap: 6,
-    marginTop: 10,
+    marginTop: 2,
     paddingTop: 8,
     paddingBottom: 6,
     paddingHorizontal: 16,
