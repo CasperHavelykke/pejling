@@ -7,10 +7,11 @@ import {
   type DrinkDef,
 } from "../domain/drinks";
 import { useLang } from "../i18n";
+import type { Entry } from "../state/usePejling";
 import { colors, fonts, radius } from "../theme/tokens";
 import { DrinkIcon, iconHeight } from "./icons";
 
-type Props = { onAdd: (def: DrinkDef) => void };
+type Props = { onAdd: (entry: Entry) => void };
 
 export function SimpleButtons({ onAdd }: Props) {
   // Tegnes igen, når sproget skifter.

@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AppState } from "react-native";
-import type { DrinkDef, DrinkLog } from "../domain/drinks";
+import {
+  dropRecent,
+  parseCustom,
+  pushRecent,
+  readRecents,
+} from "../domain/custom";
+import type { DrinkLog } from "../domain/drinks";
 import {
   DEFAULT_WEIGHT_KG,
   activeUnits,
@@ -22,7 +28,13 @@ import {
   updateDrinkBodies,
 } from "../storage/store";
 
-export type Mode = "simple" | "advanced";
+// Knappanelerne: faste knapper i to udgaver og egen indtastning.
+export type Mode = "simple" | "advanced" | "custom";
+
+const MODES: readonly Mode[] = ["simple", "advanced", "custom"];
+
+// Det, en knap lægger i listen.
+export type Entry = { kind: string; unitsX10: number };
 
 const TICK_MS = 30_000;
 // En aften rækker aldrig længere tilbage end dette i praksis.
@@ -37,13 +49,15 @@ export function usePejling() {
   const [weightKg, setWeightKg] = useState(DEFAULT_WEIGHT_KG);
   const [sex, setSexState] = useState<Sex>("m");
   const [mode, setModeState] = useState<Mode>("simple");
+  // De seneste egne indtastninger, nyeste først.
+  const [recents, setRecents] = useState<string[]>([]);
   const [now, setNow] = useState(() => Date.now());
   // Skrivninger køres i rækkefølge, så fortryd aldrig overhaler tilføj.
   const queue = useRef<Promise<unknown>>(Promise.resolve());
   const realIds = useRef(new Map<number, number>());
   // Nyeste værdier til de funktioner, der kun oprettes én gang.
-  const latest = useRef({ logs, weightKg, sex });
-  latest.current = { logs, weightKg, sex };
+  const latest = useRef({ logs, weightKg, sex, recents });
+  latest.current = { logs, weightKg, sex, recents };
 
   useEffect(() => {
     let alive = true;
@@ -56,9 +70,9 @@ export function usePejling() {
         if (!alive) return;
         if (settings.weightKg) setWeightKg(clampWeight(Number(settings.weightKg)));
         if (settings.sex === "f" || settings.sex === "m") setSexState(settings.sex);
-        if (settings.mode === "advanced" || settings.mode === "simple") {
-          setModeState(settings.mode);
-        }
+        const savedMode = MODES.find((m) => m === settings.mode);
+        if (savedMode) setModeState(savedMode);
+        setRecents(readRecents(settings.recentCustom));
         setLogs(drinks);
       } catch (e) {
         console.warn("Kunne ikke læse gemte data", e);
@@ -91,7 +105,7 @@ export function usePejling() {
   }, []);
 
   const add = useCallback(
-    (def: DrinkDef) => {
+    (def: Entry) => {
       const t = Date.now();
       const id = tempId--;
       const body: Body = {
@@ -107,6 +121,11 @@ export function usePejling() {
         const saved = await insertDrink(def.kind, def.unitsX10, t, body);
         realIds.current.set(id, saved.id);
       });
+      if (parseCustom(def.kind)) {
+        const next = pushRecent(latest.current.recents, def.kind);
+        setRecents(next);
+        enqueue(() => saveSetting("recentCustom", JSON.stringify(next)));
+      }
     },
     [enqueue],
   );
@@ -142,6 +161,16 @@ export function usePejling() {
         const realId = id < 0 ? realIds.current.get(id) : id;
         if (realId !== undefined) await deleteDrink(realId);
       });
+    },
+    [enqueue],
+  );
+
+  // Fjerner et valg fra rækken Seneste. Aftenens indtastninger røres ikke.
+  const removeRecent = useCallback(
+    (kind: string) => {
+      const next = dropRecent(latest.current.recents, kind);
+      setRecents(next);
+      enqueue(() => saveSetting("recentCustom", JSON.stringify(next)));
     },
     [enqueue],
   );
@@ -191,11 +220,13 @@ export function usePejling() {
   return {
     ready,
     mode,
+    recents,
     weightKg,
     sex,
     ...derived,
     add,
     remove,
+    removeRecent,
     setWeight,
     setSex,
     setMode,

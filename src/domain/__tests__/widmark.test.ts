@@ -248,3 +248,18 @@ describe("format og tekster", () => {
     expect(clampWeight(NaN)).toBe(80);
   });
 });
+
+describe("farven midt i en overgang", () => {
+  const { lerpRgb } = require("../../theme/color") as typeof import("../../theme/color");
+
+  test("start, midte og slut", () => {
+    expect(lerpRgb("rgb(20, 20, 46)", "rgb(120, 30, 40)", 0)).toBe("rgb(20, 20, 46)");
+    expect(lerpRgb("rgb(20, 20, 46)", "rgb(120, 30, 40)", 1)).toBe("rgb(120, 30, 40)");
+    expect(lerpRgb("rgb(20, 20, 46)", "rgb(120, 30, 40)", 0.5)).toBe("rgb(70, 25, 43)");
+  });
+
+  test("holder sig mellem de to farver", () => {
+    expect(lerpRgb("rgb(0, 0, 0)", "rgb(10, 10, 10)", 2)).toBe("rgb(10, 10, 10)");
+    expect(lerpRgb("rgb(0, 0, 0)", "rgb(10, 10, 10)", -1)).toBe("rgb(0, 0, 0)");
+  });
+});

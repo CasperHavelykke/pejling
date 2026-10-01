@@ -7,6 +7,7 @@
 
 import { strings } from "../i18n";
 import type { DrinkText } from "../i18n/types";
+import { parseCustom, type CustomDrink } from "./custom";
 
 export type DrinkCategory = "beer" | "wine" | "drink" | "shot";
 
@@ -110,11 +111,25 @@ export function drinkText(kind: DrinkKind): DrinkText {
   return strings().drinks[kind];
 }
 
+// Tal til navne og knapper: hele tal uden decimal, ellers én decimal.
+function plain(n: number): string {
+  const s = strings();
+  return Number.isInteger(n) ? String(n) : n.toFixed(1).replace(".", s.decimal);
+}
+
+// En egen indtastning, fx "Øl 44 cl 5,5 %".
+export function customName({ type, cl, abv }: CustomDrink): string {
+  const s = strings();
+  return s.custom.name(s.custom.types[type], plain(cl), plain(abv));
+}
+
 // Navn til visning. Ukendte typer (fx fra en nyere app-version) vises råt
 // frem for at vælte listen.
 export function drinkName(kind: string): string {
   const def = BY_KIND.get(kind);
-  return def ? drinkText(def.kind).name : kind;
+  if (def) return drinkText(def.kind).name;
+  const custom = parseCustom(kind);
+  return custom ? customName(custom) : kind;
 }
 
 // En indtastning, som den ligger i databasen.

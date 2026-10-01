@@ -67,7 +67,7 @@ export const da: Strings = {
   // Indholdet af det, man drikker, er en fejlkilde for sig, ved siden af
   // kroppens forbrænding.
   infoDrinks:
-    "Knapperne regner med typiske størrelser og styrker. En stærk øl, en stor fadøl eller en drink med ekstra sprut indeholder mere, end knappen tæller. Brug Avanceret, hvis du vil ramme tættere.",
+    "Knapperne regner med typiske størrelser og styrker. En stærk øl, en stor fadøl eller en drink med ekstra sprut indeholder mere, end knappen tæller. Swipe knapperne til venstre for flere størrelser, eller for selv at angive størrelse og styrke.",
   infoDisclaimer:
     "Pejling er vejledende og kan ikke bruges til at vurdere, om du må køre. Nul aktive genstande betyder ikke, at du er klar til at køre. Forbrændingen varierer fra person til person.",
   infoStorage:
@@ -138,6 +138,22 @@ export const da: Strings = {
     summary: (units, time) => `${units} genstande i aften · seneste ${time}`,
     nothingYet: "Ingen genstande endnu",
     showList: "Vis listen",
+  },
+  custom: {
+    page: "Tilpasset",
+    types: { beer: "Øl", wine: "Vin", spirit: "Sprut" },
+    size: "Størrelse",
+    strength: "Styrke",
+    smaller: "Mindre",
+    larger: "Større",
+    weaker: "Svagere",
+    stronger: "Stærkere",
+    add: (units, n) => `Tilføj · ${units} ${n === 1 ? "genstand" : "genstande"}`,
+    recent: "Seneste",
+    recentHint: "Hold nede for at fjerne fra Seneste",
+    recentEmpty: "Dine seneste valg kommer til at stå her",
+    percent: (n) => `${n} %`,
+    name: (type, cl, abv) => `${type} ${cl} cl ${abv} %`,
   },
   drawer: {
     title: "I aften",

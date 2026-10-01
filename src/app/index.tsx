@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Easing,
@@ -19,14 +19,15 @@ import { SpeechBubble } from "../components/SpeechBubble";
 import { TonightDrawer } from "../components/TonightDrawer";
 import { roastFor, statusFor } from "../domain/copy";
 import { daWhole, hhmm, soberLine, unitsX10Label } from "../domain/format";
+import { alongTrack, buildTrack } from "../domain/pagerTrack";
 import { setLang, useStrings, type Lang } from "../i18n";
 import { usePejling, type Mode } from "../state/usePejling";
 import { saveSetting } from "../storage/store";
-import { mixOklch } from "../theme/color";
+import { lerpRgb, mixOklch } from "../theme/color";
 import { colors, fonts, radius, space } from "../theme/tokens";
 
 // Knappanelerne i den rækkefølge, de swipes i.
-const PAGES: readonly Mode[] = ["simple", "advanced"];
+const PAGES: readonly Mode[] = ["simple", "advanced", "custom"];
 
 // Uglens højde i punkter ved skala 1.
 const OWL_HEIGHT = 130;
@@ -41,23 +42,52 @@ function useBackground(t: number) {
     () => mixOklch(colors.bg, colors.red, Math.round(t * 85) / 100),
     [t],
   );
-  const [pair, setPair] = useState({ from: target, to: target });
-  const progress = useRef(new Animated.Value(1)).current;
+  // Start, mål og fremdrift hører sammen og skiftes samlet. Blev
+  // fremdriften nulstillet for sig, viste skærmen i et enkelt billede den
+  // farve, den forrige overgang startede fra: et kort blink tilbage mod blå.
+  const [fade, setFade] = useState(() => ({
+    from: target,
+    to: target,
+    progress: new Animated.Value(1),
+  }));
+  // Hvor langt den igangværende overgang er nået, 0..1.
+  const reached = useRef(1);
 
   useEffect(() => {
-    progress.setValue(0);
-    setPair((prev) => ({ from: prev.to, to: target }));
-    Animated.timing(progress, {
-      toValue: 1,
-      duration: 700,
-      easing: Easing.inOut(Easing.ease),
-      useNativeDriver: false,
-    }).start();
-  }, [target, progress]);
+    setFade((prev) =>
+      prev.to === target
+        ? prev
+        : {
+            // Fortsæt fra den farve, der står på skærmen nu, også hvis den
+            // forrige overgang ikke var færdig.
+            from: lerpRgb(prev.from, prev.to, reached.current),
+            to: target,
+            progress: new Animated.Value(0),
+          },
+    );
+  }, [target]);
 
-  return progress.interpolate({
+  useEffect(() => {
+    const { progress } = fade;
+    const done = fade.from === fade.to;
+    reached.current = done ? 1 : 0;
+    const id = progress.addListener(({ value }) => {
+      reached.current = value;
+    });
+    if (!done) {
+      Animated.timing(progress, {
+        toValue: 1,
+        duration: 700,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: false,
+      }).start();
+    }
+    return () => progress.removeListener(id);
+  }, [fade]);
+
+  return fade.progress.interpolate({
     inputRange: [0, 1],
-    outputRange: [pair.from, pair.to],
+    outputRange: [fade.from, fade.to],
   });
 }
 
@@ -68,16 +98,42 @@ export default function PejlingScreen() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const background = useBackground(p.t);
-  const { width, height } = useWindowDimensions();
-  // Knappanelets vandrette position. Ugle og luft følger den, så skærmen
-  // glider mellem de to opstillinger, mens man swiper.
+  const window = useWindowDimensions();
+  const width = window.width;
+  // Skærmens højde måles på selve skærmbilledet. Telefonens egen oplysning
+  // om vinduets højde regner på nogle Android-telefoner ikke statuslinjen
+  // og knapperne i bunden med, og så blev uglen alt for lille.
+  const [rootHeight, setRootHeight] = useState<number | null>(null);
+  const height = rootHeight ?? window.height;
+  // Knappanelernes højder, målt af panelerne selv.
+  const [heights, setHeights] = useState<(number | null)[]>(() =>
+    PAGES.map(() => null),
+  );
+  const setPanelHeight = useCallback((index: number, h: number) => {
+    setHeights((prev) => {
+      if (prev[index] !== null && Math.abs((prev[index] ?? 0) - h) < 0.5) {
+        return prev;
+      }
+      const next = [...prev];
+      next[index] = h;
+      return next;
+    });
+  }, []);
+  // Knappanelets vandrette position. Ugle, luft og feltets højde følger
+  // den ad samme spor, så skærmen glider samlet mellem opstillingerne.
   const scrollX = useRef(new Animated.Value(0)).current;
-  const between = (simple: number, advanced: number) =>
+  const track = useMemo(() => buildTrack(heights, width), [heights, width]);
+  const along = (values: readonly number[]) =>
     scrollX.interpolate({
-      inputRange: [0, width],
-      outputRange: [simple, advanced],
+      inputRange: track.input,
+      outputRange: alongTrack(track, values),
       extrapolate: "clamp",
     });
+  // Egen indtastning bruger samme opstilling som Avanceret.
+  const between = (simple: number, advanced: number) =>
+    along([simple, advanced, advanced]);
+  const measured = heights.every((h): h is number => h !== null);
+  const panelHeight = measured ? along(heights as number[]) : undefined;
   // Uglen får den plads, der er tilbage, når tekst og knapper har fået
   // deres. Tallene er højden af alt andet på skærmen i de to opstillinger.
   const usable = height - insets.top - insets.bottom;
@@ -85,6 +141,7 @@ export default function PejlingScreen() {
   const owlAdvanced = clamp((usable - 645) / OWL_HEIGHT, 0.32, 0.9);
   // På de mindste skærme får Avanceret også mindre luft mellem delene.
   const tight = usable < 700;
+  const page = Math.max(0, PAGES.indexOf(p.mode));
 
   const sober = soberLine(p.minutesToZero);
   const summary =
@@ -104,7 +161,10 @@ export default function PejlingScreen() {
   }
 
   return (
-    <Animated.View style={[styles.root, { backgroundColor: background }]}>
+    <Animated.View
+      style={[styles.root, { backgroundColor: background }]}
+      onLayout={(e) => setRootHeight(e.nativeEvent.layout.height)}
+    >
       <View
         style={[
           styles.screen,
@@ -174,8 +234,12 @@ export default function PejlingScreen() {
         <DrinkPager
           scrollX={scrollX}
           width={width}
-          page={Math.max(0, PAGES.indexOf(p.mode))}
-          labels={[s.main.simple, s.main.advanced]}
+          height={panelHeight}
+          onHeight={setPanelHeight}
+          page={page}
+          labels={[s.main.simple, s.main.advanced, s.custom.page]}
+          recents={p.recents}
+          onRemoveRecent={p.removeRecent}
           onPage={(i) => p.setMode(PAGES[i])}
           onAdd={p.add}
         />

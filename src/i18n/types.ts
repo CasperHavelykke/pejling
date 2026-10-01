@@ -1,6 +1,7 @@
 // Alt, brugeren kan læse, ligger i ét sæt pr. sprog. Begge sæt skal
 // opfylde denne type, så en manglende tekst bliver en fejl i typetjekket.
 
+import type { CustomType } from "../domain/custom";
 import type { DrinkKind } from "../domain/drinks";
 
 export type Lang = "da" | "en";
@@ -56,6 +57,28 @@ export type Strings = {
     summary: (units: string, time: string) => string;
     nothingYet: string;
     showList: string;
+  };
+  // Panelet til egen indtastning af type, størrelse og styrke.
+  custom: {
+    // Panelets navn, til skærmlæsere.
+    page: string;
+    types: Record<CustomType, string>;
+    size: string;
+    strength: string;
+    smaller: string;
+    larger: string;
+    weaker: string;
+    stronger: string;
+    add: (units: string, count: number) => string;
+    recent: string;
+    // Læses op af skærmlæsere på knapperne under Seneste.
+    recentHint: string;
+    // Står i rækken, indtil der er noget at vise.
+    recentEmpty: string;
+    // Dansk sætter mellemrum før procenttegnet, engelsk gør ikke.
+    percent: (n: string) => string;
+    // Navnet i listen "I aften", fx "Øl 44 cl 5,5 %".
+    name: (type: string, cl: string, abv: string) => string;
   };
   drawer: {
     title: string;

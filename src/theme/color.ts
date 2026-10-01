@@ -68,3 +68,15 @@ export function mixOklch(a: string, b: string, p: number): string {
   ]);
   return `rgb(${channel(rgb[0])}, ${channel(rgb[1])}, ${channel(rgb[2])})`;
 }
+
+// Punktet mellem to farver skrevet som "rgb(r, g, b)", regnet kanal for
+// kanal. Det er sådan, en animeret farve bevæger sig, så funktionen kan
+// fortælle, hvilken farve en overgang står på lige nu.
+export function lerpRgb(a: string, b: string, p: number): string {
+  const t = Math.min(1, Math.max(0, p));
+  const from = a.match(/\d+/g)?.map(Number) ?? [];
+  const to = b.match(/\d+/g)?.map(Number) ?? [];
+  if (from.length < 3 || to.length < 3) return b;
+  const mix = (i: number) => Math.round(from[i] + (to[i] - from[i]) * t);
+  return `rgb(${mix(0)}, ${mix(1)}, ${mix(2)})`;
+}

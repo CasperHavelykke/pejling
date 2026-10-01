@@ -68,7 +68,7 @@ export const en: Strings = {
   infoExplanation: (perHour) =>
     `The number is an estimate of how many drinks are still active in your body. One drink here is 12 g of alcohol. With your weight and sex, your body burns off about ${perHour} drinks per hour.`,
   infoDrinks:
-    "The buttons assume typical sizes and strengths. A strong beer, a large draught beer or a drink with extra spirits contains more than the button counts. Use Advanced if you want to get closer.",
+    "The buttons assume typical sizes and strengths. A strong beer, a large draught beer or a drink with extra spirits contains more than the button counts. Swipe the buttons to the left for more sizes, or to set the size and strength yourself.",
   infoDisclaimer:
     "Pejling is a guide only and cannot be used to judge whether you may drive. Zero active drinks does not mean you are fit to drive. How fast alcohol is burned off varies from person to person.",
   infoStorage:
@@ -135,6 +135,22 @@ export const en: Strings = {
     summary: (units, time) => `${units} drinks tonight · latest ${time}`,
     nothingYet: "No drinks yet",
     showList: "Show the list",
+  },
+  custom: {
+    page: "Custom",
+    types: { beer: "Beer", wine: "Wine", spirit: "Spirits" },
+    size: "Size",
+    strength: "Strength",
+    smaller: "Smaller",
+    larger: "Larger",
+    weaker: "Weaker",
+    stronger: "Stronger",
+    add: (units, n) => `Add · ${units} ${n === 1 ? "drink" : "drinks"}`,
+    recent: "Recent",
+    recentHint: "Press and hold to remove from Recent",
+    recentEmpty: "Your recent choices will show up here",
+    percent: (n) => `${n}%`,
+    name: (type, cl, abv) => `${type} ${cl} cl ${abv}%`,
   },
   drawer: {
     title: "Tonight",

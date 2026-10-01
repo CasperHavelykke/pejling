@@ -1,11 +1,12 @@
 // Knappanelerne ligger side om side og skiftes med et swipe: Simpel først,
-// Avanceret til højre. Prikkerne under panelet viser, hvor man er, og kan
+// så Avanceret, og til sidst egen indtastning. Prikkerne under panelet viser, hvor man er, og kan
 // trykkes på, så panelet også kan skiftes uden at swipe.
 //
 // Panelerne er ikke lige høje. Feltets højde følger fingeren, så resten af
-// skærmen glider med i stedet for at springe.
+// skærmen glider med i stedet for at springe. Skærmen regner højden ud og
+// giver den med, fordi ugle og luft skal følge samme bevægelse.
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
   Animated,
   Pressable,
@@ -15,17 +16,20 @@ import {
   type NativeScrollEvent,
   type NativeSyntheticEvent,
 } from "react-native";
-import type { DrinkDef } from "../domain/drinks";
+import type { Entry } from "../state/usePejling";
 import { colors, space } from "../theme/tokens";
+import { CustomPanel } from "./CustomPanel";
 import { AdvancedButtons, SimpleButtons } from "./DrinkButtons";
-
-export const PAGE_COUNT = 2;
 
 export function DrinkPager({
   scrollX,
   width,
+  height,
+  onHeight,
   page,
   labels,
+  recents,
+  onRemoveRecent,
   onPage,
   onAdd,
 }: {
@@ -34,18 +38,22 @@ export function DrinkPager({
   scrollX: Animated.Value;
   // Ét panels bredde, lig med skærmens.
   width: number;
+  // Feltets højde lige nu. Mangler, indtil alle paneler er målt.
+  height: Animated.AnimatedInterpolation<number> | undefined;
+  // Melder et panels egen højde.
+  onHeight: (page: number, height: number) => void;
   // Det gemte panel. Bruges ved start og til at markere den valgte prik.
   page: number;
   // Navn på hvert panel, til skærmlæsere.
   labels: readonly string[];
+  // De seneste egne indtastninger, til det tredje panel.
+  recents: readonly string[];
+  onRemoveRecent: (kind: string) => void;
   onPage: (page: number) => void;
-  onAdd: (def: DrinkDef) => void;
+  onAdd: (entry: Entry) => void;
 }) {
   const ref = useRef<ScrollView>(null);
-  const [heights, setHeights] = useState<(number | null)[]>(() =>
-    Array<number | null>(PAGE_COUNT).fill(null),
-  );
-  const measured = heights.every((h): h is number => h !== null);
+  const measured = height !== undefined;
   const settled = useRef(page);
 
   // Start på det gemte panel uden animation.
@@ -58,17 +66,6 @@ export function DrinkPager({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [width]);
 
-  function setHeight(index: number, h: number) {
-    setHeights((prev) => {
-      if (prev[index] !== null && Math.abs((prev[index] ?? 0) - h) < 0.5) {
-        return prev;
-      }
-      const next = [...prev];
-      next[index] = h;
-      return next;
-    });
-  }
-
   // Panelet regnes som skiftet, når det ligger stille på en hel side.
   function onScroll(e: NativeSyntheticEvent<NativeScrollEvent>) {
     const x = e.nativeEvent.contentOffset.x;
@@ -80,18 +77,15 @@ export function DrinkPager({
     }
   }
 
-  const stops = Array.from({ length: PAGE_COUNT }, (_, i) => i * width);
-  const height = measured
-    ? scrollX.interpolate({
-        inputRange: stops,
-        outputRange: heights as number[],
-        extrapolate: "clamp",
-      })
-    : undefined;
-
   const panels = [
     <SimpleButtons key="simple" onAdd={onAdd} />,
     <AdvancedButtons key="advanced" onAdd={onAdd} />,
+    <CustomPanel
+      key="custom"
+      recents={recents}
+      onAdd={onAdd}
+      onRemoveRecent={onRemoveRecent}
+    />,
   ];
 
   return (
@@ -115,11 +109,11 @@ export function DrinkPager({
           )}
         >
           {panels.map((panel, i) => (
-            // Panelet står på bunden af feltet. Er feltet lavere end
-            // panelet midt i et swipe, er det toppen, der er skjult.
+            // Panelet står på bunden af feltet. Feltet når det høje
+            // panels højde tidligt i et swipe, så toppen ikke er skjult.
             <Animated.View key={i} style={[styles.page, { width, height }]}>
               <View
-                onLayout={(e) => setHeight(i, e.nativeEvent.layout.height)}
+                onLayout={(e) => onHeight(i, e.nativeEvent.layout.height)}
               >
                 {panel}
               </View>
