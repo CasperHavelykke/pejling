@@ -169,6 +169,13 @@ export const da: Strings = {
     undo: "Fortryd",
     undoLabel: (name, time) => `Fortryd ${name} klokken ${time}`,
     history: "Tidligere aftener",
+    clear: "Ryd",
+    clearTitle: (n) =>
+      n === 1
+        ? "Ryd aftenens ene indtastning?"
+        : `Ryd aftenens ${n} indtastninger?`,
+    clearBody: "De kan ikke hentes tilbage.",
+    cancel: "Annuller",
   },
   info: {
     you: "Dig",

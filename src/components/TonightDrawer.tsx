@@ -1,5 +1,13 @@
 import { useRef, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { drinkName, type DrinkLog } from "../domain/drinks";
 import {
   entryWord,
@@ -19,6 +27,7 @@ export function TonightDrawer({
   soberLine,
   bottomInset,
   onUndo,
+  onClear,
   onHistory,
 }: {
   open: boolean;
@@ -29,6 +38,7 @@ export function TonightDrawer({
   soberLine: string;
   bottomInset: number;
   onUndo: (id: number) => void;
+  onClear: () => void;
   onHistory: () => void;
 }) {
   // Listen ruller kun, når den er længere end pladsen. Ellers ejer
@@ -39,6 +49,21 @@ export function TonightDrawer({
   const [listHeight, setListHeight] = useState(0);
   const [contentHeight, setContentHeight] = useState(0);
   const scrollable = contentHeight > listHeight + 1;
+
+  // Rydning kan ikke fortrydes, så der spørges først. Browseren har ikke
+  // Alert, så der bruges dens egen dialog.
+  const confirmClear = () => {
+    const title = s.drawer.clearTitle(drinks.length);
+    if (Platform.OS === "web") {
+      if (window.confirm(`${title}
+${s.drawer.clearBody}`)) onClear();
+      return;
+    }
+    Alert.alert(title, s.drawer.clearBody, [
+      { text: s.drawer.cancel, style: "cancel" },
+      { text: s.drawer.clear, style: "destructive", onPress: onClear },
+    ]);
+  };
 
   return (
     <BottomPanel
@@ -60,10 +85,23 @@ export function TonightDrawer({
       <View style={styles.titleRow}>
         <Text style={styles.title}>{s.drawer.title}</Text>
         {drinks.length > 0 && (
-          <Text style={styles.total}>
+          <Text style={styles.total} numberOfLines={1}>
             {drinks.length} {entryWord(drinks.length)} ·{" "}
             {unitsX10Label(totalX10)} {genstandWord(totalX10 / 10)}
           </Text>
+        )}
+        {drinks.length > 0 && (
+          <Pressable
+            onPress={confirmClear}
+            accessibilityRole="button"
+            hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}
+            style={({ pressed }) => [
+              styles.clear,
+              pressed && { backgroundColor: colors.accentTint },
+            ]}
+          >
+            <Text style={styles.clearText}>{s.drawer.clear}</Text>
+          </Pressable>
         )}
       </View>
 
@@ -155,7 +193,24 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   title: { fontFamily: fonts.medium, fontSize: 18, color: colors.text },
-  total: { fontFamily: fonts.regular, fontSize: 13, color: colors.muted },
+  total: {
+    flexShrink: 1,
+    fontFamily: fonts.regular,
+    fontSize: 13,
+    color: colors.muted,
+  },
+  clear: {
+    marginLeft: "auto",
+    paddingVertical: 4,
+    paddingHorizontal: 6,
+    marginRight: -6,
+    borderRadius: radius.ghost,
+  },
+  clearText: {
+    fontFamily: fonts.regular,
+    fontSize: 13,
+    color: colors.accentText,
+  },
   list: { marginTop: 8, flexGrow: 0 },
   empty: {
     fontFamily: fonts.regular,

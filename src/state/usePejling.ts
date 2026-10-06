@@ -185,6 +185,25 @@ export function usePejling() {
     [enqueue],
   );
 
+  // Sletter alle aftenens indtastninger på én gang. Tidligere aftener
+  // røres ikke, og det kan ikke fortrydes.
+  const clearTonight = useCallback(() => {
+    const { logs, weightKg, sex } = latest.current;
+    const ids = currentSession(logs, Date.now(), { weightKg, sex }).map(
+      (l) => l.id,
+    );
+    if (ids.length === 0) return;
+    const set = new Set(ids);
+    setLogs((prev) => prev.filter((l) => !set.has(l.id)));
+    setNow(Date.now());
+    enqueue(async () => {
+      for (const id of ids) {
+        const realId = id < 0 ? realIds.current.get(id) : id;
+        if (realId !== undefined) await deleteDrink(realId);
+      }
+    });
+  }, [enqueue]);
+
   // Fjerner et valg fra rækken Seneste. Aftenens indtastninger røres ikke.
   const removeRecent = useCallback(
     (kind: string) => {
@@ -287,6 +306,7 @@ export function usePejling() {
     ...derived,
     add,
     remove,
+    clearTonight,
     removeRecent,
     setWeight,
     setSex,

@@ -97,6 +97,10 @@ export type Strings = {
     undo: string;
     undoLabel: (name: string, time: string) => string;
     history: string;
+    clear: string;
+    clearTitle: (n: number) => string;
+    clearBody: string;
+    cancel: string;
   };
   info: {
     you: string;

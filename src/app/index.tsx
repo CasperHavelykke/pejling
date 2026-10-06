@@ -272,6 +272,7 @@ export default function PejlingScreen() {
         soberLine={sober}
         bottomInset={Math.max(insets.bottom, 12) + 10}
         onUndo={p.remove}
+        onClear={p.clearTonight}
         onHistory={() => {
           setDrawerOpen(false);
           router.push("/historik");

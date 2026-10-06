@@ -166,6 +166,11 @@ export const en: Strings = {
     undo: "Undo",
     undoLabel: (name, time) => `Undo ${name} at ${time}`,
     history: "Earlier nights",
+    clear: "Clear",
+    clearTitle: (n) =>
+      n === 1 ? "Clear tonight's only entry?" : `Clear tonight's ${n} entries?`,
+    clearBody: "They can't be brought back.",
+    cancel: "Cancel",
   },
   info: {
     you: "You",
