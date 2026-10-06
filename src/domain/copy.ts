@@ -10,8 +10,23 @@ export function statusFor(level: number): string {
   return list[Math.min(Math.max(level, 0), list.length - 1)];
 }
 
+// Så mange aktive genstande når ingen ved et uheld. Står tallet der,
+// er appen ved at blive prøvet af, og uglen viser vej til Ryd i skuffen,
+// så listen ikke hænger i dagevis.
+export const TEST_HINT_UNITS = 20;
+
+// Rundes som tallet på skærmen, så hintet og tallet er enige.
+export function isTestHint(activeUnits: number): boolean {
+  return Math.round(activeUnits * 10) / 10 >= TEST_HINT_UNITS;
+}
+
 // Teksten skifter ved hvert tryk, fordi antallet indgår i valget.
-export function roastFor(level: number, drinkCount: number): string {
+export function roastFor(
+  level: number,
+  drinkCount: number,
+  activeUnits = 0,
+): string {
+  if (isTestHint(activeUnits)) return strings().testHint;
   const all = strings().roasts;
   const list = all[Math.min(level, all.length - 1)];
   return list[(drinkCount + level) % list.length];

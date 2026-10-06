@@ -17,7 +17,7 @@ import { InfoSheet } from "../components/InfoSheet";
 import { Owl } from "../components/Owl";
 import { SpeechBubble } from "../components/SpeechBubble";
 import { TonightDrawer } from "../components/TonightDrawer";
-import { roastFor, statusFor } from "../domain/copy";
+import { isTestHint, roastFor, statusFor } from "../domain/copy";
 import { daWhole, hhmm, soberLine, unitsX10Label } from "../domain/format";
 import { alongTrack, buildTrack } from "../domain/pagerTrack";
 import { setLang, useStrings, type Lang } from "../i18n";
@@ -99,6 +99,9 @@ export default function PejlingScreen() {
   const [infoOpen, setInfoOpen] = useState(false);
   const [remindersDenied, setRemindersDenied] = useState(false);
   const background = useBackground(p.t);
+  // Ved urealistisk mange genstande dropper uglen rollen og ser nøgtern
+  // ud, mens tal, statuslinje og baggrund stadig viser det rigtige.
+  const testing = isTestHint(p.active);
   const window = useWindowDimensions();
   const width = window.width;
   // Skærmens højde måles på selve skærmbilledet. Telefonens egen oplysning
@@ -212,11 +215,16 @@ export default function PejlingScreen() {
           <Animated.View
             style={[styles.bubble, { marginTop: between(28, tight ? 8 : 14) }]}
           >
-            <SpeechBubble text={roastFor(p.level, p.tonight.length)} />
+            <SpeechBubble
+              text={roastFor(p.level, p.tonight.length, p.active)}
+            />
           </Animated.View>
 
           <Animated.View style={{ marginTop: between(22, tight ? 2 : 6) }}>
-            <Owl t={p.t} scale={between(owlSimple, owlAdvanced)} />
+            <Owl
+              t={testing ? 0 : p.t}
+              scale={between(owlSimple, owlAdvanced)}
+            />
           </Animated.View>
 
           <Animated.View

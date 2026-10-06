@@ -11,7 +11,7 @@ import {
   type Body,
 } from "../widmark";
 import { da, daWhole, entryWord, genstandWord, hhmm, soberLine } from "../format";
-import { infoExplanation, levelRows, roastFor } from "../copy";
+import { infoExplanation, isTestHint, levelRows, roastFor } from "../copy";
 import { strings } from "../../i18n";
 import {
   ADVANCED_DRINKS,
@@ -217,6 +217,14 @@ describe("format og tekster", () => {
       }
     }
     expect(roastFor(2, 1)).not.toBe(roastFor(2, 2));
+  });
+
+  test("ved urealistisk mange genstande viser uglen vej til Ryd", () => {
+    expect(isTestHint(19.94)).toBe(false);
+    expect(isTestHint(19.96)).toBe(true);
+    expect(roastFor(5, 30, 19.94)).not.toBe(strings().testHint);
+    expect(roastFor(5, 30, 19.96)).toBe(strings().testHint);
+    expect(strings().testHint).toMatch(/rydde/);
   });
 
   test("alle typer har entydige nøgler og navne", () => {

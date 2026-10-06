@@ -15,6 +15,7 @@ function allText(s: Strings): string[] {
   return [
     ...s.status,
     ...s.roasts.flat(),
+    s.testHint,
     ...s.levelNames,
     s.rangeUpTo("1"),
     s.rangeOver("1"),

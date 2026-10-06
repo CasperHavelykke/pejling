@@ -16,6 +16,8 @@ export const en: Strings = {
     "Go home – your judgement is effectively gone from here",
   ],
 
+  testHint: "Testing me? You can clear tonight in the list.",
+
   roasts: [
     // Ved nul vender brodden mod de andre i baren, aldrig mod den, der
     // ikke drikker.

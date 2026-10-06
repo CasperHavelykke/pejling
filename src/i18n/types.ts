@@ -23,6 +23,8 @@ export type Strings = {
   // Niveau 0-5. Uglen håner; statuslinjen er informativ.
   status: readonly string[];
   roasts: readonly (readonly string[])[];
+  // Uglens besked ved urealistisk mange aktive genstande (TEST_HINT_UNITS).
+  testHint: string;
   // Niveau 1-5.
   levelNames: readonly string[];
 

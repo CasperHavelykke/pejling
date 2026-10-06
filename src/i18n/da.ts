@@ -13,6 +13,8 @@ export const da: Strings = {
     "Tag hjem – dømmekraften er reelt sat ud herfra",
   ],
 
+  testHint: "Tester du mig? Du kan rydde aftenen i skuffen.",
+
   roasts: [
     // Ved nul må uglen aldrig håne den, der ikke drikker, eller lægge op
     // til at gå i gang. Brodden vender mod de andre i baren.
