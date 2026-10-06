@@ -5,8 +5,8 @@ import { useStrings } from "../i18n";
 import { LEVEL_STEPS } from "../theme/levels";
 import { colors, fonts, radius } from "../theme/tokens";
 
-const BAR_WIDTH = 220;
-const PILL_HEIGHT = 24;
+const BAR_WIDTH = 260;
+const PILL_HEIGHT = 34;
 
 // Så længe står forklaringen fremme efter et tryk på pillen.
 const DETAIL_MS = 5000;
@@ -77,7 +77,7 @@ export function LevelScale({ level }: { level: number }) {
 }
 
 const styles = StyleSheet.create({
-  wrap: { alignItems: "center", marginTop: 8 },
+  wrap: { alignItems: "center", marginTop: 10 },
   bar: {
     width: BAR_WIDTH,
     height: PILL_HEIGHT,
@@ -85,18 +85,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
   },
-  segment: { flex: 1, height: 4, borderRadius: 2 },
+  segment: { flex: 1, height: 5, borderRadius: 3 },
   segmentAhead: { opacity: 0.3 },
   pill: {
     height: PILL_HEIGHT,
     justifyContent: "center",
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
     borderRadius: radius.pill,
   },
   pillText: {
     fontFamily: fonts.medium,
-    fontSize: 11,
-    letterSpacing: 1,
+    fontSize: 15,
+    letterSpacing: 1.2,
   },
   pillTop: { fontFamily: fonts.bold },
   detail: {
