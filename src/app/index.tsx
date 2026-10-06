@@ -303,6 +303,7 @@ export default function PejlingScreen() {
         onClose={() => setInfoOpen(false)}
         weightKg={p.weightKg}
         sex={p.sex}
+        level={p.level}
         bottomInset={Math.max(insets.bottom, 12) + 28}
         onWeight={p.setWeight}
         onSex={p.setSex}

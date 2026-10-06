@@ -193,6 +193,7 @@ export const en: Strings = {
       "Pejling is not allowed to show notifications. Allow it in your phone's settings and try again.",
     howTitle: "How Pejling calculates",
     tableHead: "Active drinks",
+    now: "now",
     dataTitle: "Your data",
     close: "Close",
   },

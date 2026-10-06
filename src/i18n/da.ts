@@ -198,6 +198,7 @@ export const da: Strings = {
       "Pejling har ikke lov til at vise notifikationer. Giv lov i telefonens indstillinger, og prøv igen.",
     howTitle: "Sådan regner Pejling",
     tableHead: "Aktive genstande",
+    now: "nu",
     dataTitle: "Dine data",
     close: "Luk",
   },

@@ -122,6 +122,8 @@ export type Strings = {
     remindersDenied: string;
     howTitle: string;
     tableHead: string;
+    // Mærket på den række i skalaen, der gælder lige nu.
+    now: string;
     dataTitle: string;
     close: string;
   };

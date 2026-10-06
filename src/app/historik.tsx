@@ -40,20 +40,8 @@ import {
 } from "../domain/widmark";
 import { useStrings } from "../i18n";
 import { loadDrinksSince, loadSettings } from "../storage/store";
-import { mixOklch } from "../theme/color";
+import { LEVEL_STEPS, stepFor } from "../theme/levels";
 import { colors, fonts, radius, space } from "../theme/tokens";
-
-// Ét farvetrin pr. niveau 1-5: samme farvetone som hovedtallet, fra svag
-// til kraftig. Teksten skifter til mørk på de to lyseste trin, så den
-// altid kan læses.
-const STEPS = [0.22, 0.36, 0.5, 0.72, 0.9].map((p, i) => ({
-  fill: mixOklch(colors.bg, colors.num, p),
-  ink: i >= 3 ? colors.inkOnLight : colors.text,
-}));
-
-function stepFor(level: number) {
-  return STEPS[Math.min(STEPS.length, Math.max(1, level)) - 1];
-}
 
 function thisMonth(): YearMonth {
   const d = new Date();
@@ -335,7 +323,7 @@ function Legend() {
       <View style={styles.legendRow}>
         <Text style={styles.legendEnd}>{levelName(1)}</Text>
         <View style={styles.swatches}>
-          {STEPS.map((s, i) => (
+          {LEVEL_STEPS.map((s, i) => (
             <View key={i} style={[styles.swatch, { backgroundColor: s.fill }]} />
           ))}
         </View>

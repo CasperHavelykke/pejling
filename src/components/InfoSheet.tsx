@@ -8,6 +8,7 @@ import {
   type Sex,
 } from "../domain/widmark";
 import { useLang, useStrings, type Lang } from "../i18n";
+import { LEVEL_STEPS } from "../theme/levels";
 import { colors, fonts, radius } from "../theme/tokens";
 import { BottomPanel } from "./BottomPanel";
 import { Segmented } from "./Segmented";
@@ -53,6 +54,7 @@ export function InfoSheet({
   onClose,
   weightKg,
   sex,
+  level,
   bottomInset,
   onWeight,
   reminders,
@@ -65,6 +67,8 @@ export function InfoSheet({
   onClose: () => void;
   weightKg: number;
   sex: Sex;
+  // Niveau 0-5 lige nu; rækken i skalaen mærkes. Ved 0 mærkes ingen.
+  level: number;
   bottomInset: number;
   onWeight: (kg: number) => void;
   onSex: (sex: Sex) => void;
@@ -166,19 +170,39 @@ export function InfoSheet({
         <Text style={styles.body}>{infoExplanation(body)}</Text>
         <Text style={styles.body}>{s.infoDrinks}</Text>
 
-        <View style={styles.table}>
-          <Text style={[styles.tableText, styles.tableHead]}>
-            {s.info.tableHead}
-          </Text>
-          {levelRows(body).map(([range, label]) => (
-            <View key={range} style={styles.tableRow}>
-              <Text style={[styles.tableText, styles.tableRange]}>{range}</Text>
-              <Text style={styles.tableText}>{label}</Text>
-            </View>
-          ))}
+        {/* Skalaen: samme fem farver som historikkens kalender. */}
+        <View style={styles.scale}>
+          <Text style={styles.scaleHead}>{s.info.tableHead}</Text>
+          {levelRows(body).map(([range, label], i) => {
+            const current = level === i + 1;
+            return (
+              <View
+                key={range}
+                style={styles.scaleRow}
+                accessibilityLabel={`${range}: ${label}${current ? `, ${s.info.now}` : ""}`}
+              >
+                <View
+                  style={[
+                    styles.swatch,
+                    { backgroundColor: LEVEL_STEPS[i].fill },
+                    current && styles.swatchCurrent,
+                  ]}
+                />
+                <Text style={styles.scaleRange}>{range}</Text>
+                <Text
+                  style={[styles.scaleName, current && styles.scaleNameCurrent]}
+                >
+                  {label}
+                </Text>
+                {current && <Text style={styles.scaleNow}>{s.info.now}</Text>}
+              </View>
+            );
+          })}
         </View>
 
-        <Text style={styles.disclaimer}>{s.infoDisclaimer}</Text>
+        <View style={styles.disclaimerBox}>
+          <Text style={styles.disclaimer}>{s.infoDisclaimer}</Text>
+        </View>
 
         <View style={styles.rule} />
 
@@ -273,17 +297,47 @@ const styles = StyleSheet.create({
   body: {
     fontFamily: fonts.regular,
     fontSize: 14,
-    lineHeight: 21,
+    lineHeight: 20,
     color: colors.text,
   },
-  table: { gap: 4 },
-  tableRow: { flexDirection: "row", gap: 14 },
-  tableRange: { width: 76, fontVariant: ["tabular-nums"] },
-  tableHead: { fontSize: 11, marginBottom: 2 },
-  tableText: {
+  scale: { gap: 6, marginTop: 2 },
+  scaleHead: {
+    fontFamily: fonts.regular,
+    fontSize: 11,
+    letterSpacing: 0.4,
+    textTransform: "uppercase",
+    color: colors.muted,
+    marginBottom: 2,
+  },
+  scaleRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  swatch: { width: 14, height: 14, borderRadius: 4 },
+  swatchCurrent: {
+    borderWidth: 2,
+    borderColor: colors.text,
+  },
+  scaleRange: {
+    width: 70,
     fontFamily: fonts.regular,
     fontSize: 13,
     color: colors.muted,
+    fontVariant: ["tabular-nums"],
+  },
+  scaleName: {
+    flex: 1,
+    fontFamily: fonts.regular,
+    fontSize: 14,
+    color: colors.text,
+  },
+  scaleNameCurrent: { fontFamily: fonts.medium },
+  scaleNow: {
+    fontFamily: fonts.regular,
+    fontSize: 11,
+    color: colors.num,
+  },
+  disclaimerBox: {
+    padding: 12,
+    borderRadius: radius.control,
+    backgroundColor: colors.bubble,
   },
   disclaimer: {
     fontFamily: fonts.regular,
