@@ -60,6 +60,8 @@ export type Strings = {
     summary: (units: string, time: string) => string;
     nothingYet: string;
     showList: string;
+    // Hjælpetekst til pillen under tallet, til skærmlæsere.
+    showLevelHint: string;
   };
   // Panelet til egen indtastning af type, størrelse og styrke.
   custom: {

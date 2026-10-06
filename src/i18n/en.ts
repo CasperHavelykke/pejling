@@ -138,6 +138,7 @@ export const en: Strings = {
     summary: (units, time) => `${units} drinks tonight · latest ${time}`,
     nothingYet: "No drinks yet",
     showList: "Show the list",
+    showLevelHint: "Shows what the level means",
   },
   custom: {
     page: "Custom",

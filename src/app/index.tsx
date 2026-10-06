@@ -14,10 +14,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Chevron } from "../components/Chevron";
 import { DrinkPager } from "../components/DrinkPager";
 import { InfoSheet } from "../components/InfoSheet";
+import { LevelScale } from "../components/LevelScale";
 import { Owl } from "../components/Owl";
 import { SpeechBubble } from "../components/SpeechBubble";
 import { TonightDrawer } from "../components/TonightDrawer";
-import { isTestHint, roastFor, statusFor } from "../domain/copy";
+import { isTestHint, roastFor } from "../domain/copy";
 import {
   clearLine,
   daWhole,
@@ -248,7 +249,7 @@ export default function PejlingScreen() {
               {daWhole(p.active)}
             </Text>
             <Text style={styles.numberLabel}>{s.main.activeLabel}</Text>
-            <StatusLine level={p.level} />
+            <LevelScale level={p.level} />
           </Animated.View>
 
           {/* Hvornår tallet når nul, står i bunden af listen "I aften". */}
@@ -316,28 +317,6 @@ export default function PejlingScreen() {
   );
 }
 
-const TOP_LEVEL = 5;
-
-// På det højeste trin står "TAG HJEM" med store bogstaver og fed skrift.
-// Resten af linjen er uændret.
-function StatusLine({ level }: { level: number }) {
-  // Ved nul siger tallet det hele.
-  if (level === 0) return null;
-  const text = statusFor(level);
-  const split = text.indexOf(" – ");
-  if (level < TOP_LEVEL || split === -1) {
-    return <Text style={styles.status}>{text}</Text>;
-  }
-  return (
-    <Text style={styles.status} accessibilityLabel={text}>
-      <Text style={styles.statusAlarm}>
-        {text.slice(0, split).toUpperCase()}
-      </Text>
-      {text.slice(split)}
-    </Text>
-  );
-}
-
 const styles = StyleSheet.create({
   root: { flex: 1, overflow: "hidden" },
   screen: { flex: 1, paddingHorizontal: space.side },
@@ -384,16 +363,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.numMuted,
   },
-  status: {
-    marginTop: 8,
-    maxWidth: 300,
-    fontFamily: fonts.medium,
-    fontSize: 17,
-    lineHeight: 22,
-    textAlign: "center",
-    color: colors.text,
-  },
-  statusAlarm: { fontFamily: fonts.bold, letterSpacing: 0.5 },
   spacer: { flex: 1, minHeight: 22 },
   handle: {
     alignSelf: "center",

@@ -32,6 +32,14 @@ export function roastFor(
   return list[(drinkCount + level) % list.length];
 }
 
+// Forklaringen efter tankestregen i statuslinjen, fx "hæmningerne falder,
+// og det gør dømmekraften også". Navnet står for sig i levelName.
+export function statusDetail(level: number): string {
+  const text = statusFor(level);
+  const split = text.indexOf(" – ");
+  return split === -1 ? text : text.slice(split + 3);
+}
+
 // Navn på niveau 1-5.
 export function levelName(level: number): string {
   const names = strings().levelNames;

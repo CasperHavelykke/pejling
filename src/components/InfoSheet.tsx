@@ -1,6 +1,6 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import { infoExplanation, levelRows } from "../domain/copy";
+import { infoExplanation, levelRows, statusDetail } from "../domain/copy";
 import {
   MAX_WEIGHT_KG,
   MIN_WEIGHT_KG,
@@ -179,7 +179,7 @@ export function InfoSheet({
               <View
                 key={range}
                 style={styles.scaleRow}
-                accessibilityLabel={`${range}: ${label}${current ? `, ${s.info.now}` : ""}`}
+                accessibilityLabel={`${range}: ${label}. ${statusDetail(i + 1)}${current ? `, ${s.info.now}` : ""}`}
               >
                 <View
                   style={[
@@ -189,11 +189,14 @@ export function InfoSheet({
                   ]}
                 />
                 <Text style={styles.scaleRange}>{range}</Text>
-                <Text
-                  style={[styles.scaleName, current && styles.scaleNameCurrent]}
-                >
-                  {label}
-                </Text>
+                <View style={styles.scaleText}>
+                  <Text
+                    style={[styles.scaleName, current && styles.scaleNameCurrent]}
+                  >
+                    {label}
+                  </Text>
+                  <Text style={styles.scaleDetail}>{statusDetail(i + 1)}</Text>
+                </View>
                 {current && <Text style={styles.scaleNow}>{s.info.now}</Text>}
               </View>
             );
@@ -300,7 +303,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: colors.text,
   },
-  scale: { gap: 6, marginTop: 2 },
+  scale: { gap: 8, marginTop: 2 },
   scaleHead: {
     fontFamily: fonts.regular,
     fontSize: 11,
@@ -309,8 +312,8 @@ const styles = StyleSheet.create({
     color: colors.muted,
     marginBottom: 2,
   },
-  scaleRow: { flexDirection: "row", alignItems: "center", gap: 10 },
-  swatch: { width: 14, height: 14, borderRadius: 4 },
+  scaleRow: { flexDirection: "row", alignItems: "flex-start", gap: 10 },
+  swatch: { width: 14, height: 14, borderRadius: 4, marginTop: 3 },
   swatchCurrent: {
     borderWidth: 2,
     borderColor: colors.text,
@@ -319,19 +322,28 @@ const styles = StyleSheet.create({
     width: 70,
     fontFamily: fonts.regular,
     fontSize: 13,
+    lineHeight: 20,
     color: colors.muted,
     fontVariant: ["tabular-nums"],
   },
+  scaleText: { flex: 1 },
   scaleName: {
-    flex: 1,
     fontFamily: fonts.regular,
     fontSize: 14,
+    lineHeight: 20,
     color: colors.text,
+  },
+  scaleDetail: {
+    fontFamily: fonts.regular,
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.muted,
   },
   scaleNameCurrent: { fontFamily: fonts.medium },
   scaleNow: {
     fontFamily: fonts.regular,
     fontSize: 11,
+    lineHeight: 20,
     color: colors.num,
   },
   disclaimerBox: {

@@ -20,7 +20,13 @@ import {
   hhmm,
   soberLine,
 } from "../format";
-import { infoExplanation, isTestHint, levelRows, roastFor } from "../copy";
+import {
+  infoExplanation,
+  isTestHint,
+  levelRows,
+  roastFor,
+  statusDetail,
+} from "../copy";
 import { strings } from "../../i18n";
 import {
   ADVANCED_DRINKS,
@@ -244,6 +250,11 @@ describe("format og tekster", () => {
       }
     }
     expect(roastFor(2, 1)).not.toBe(roastFor(2, 2));
+  });
+
+  test("statusDetail er teksten efter tankestregen", () => {
+    expect(statusDetail(2)).toBe("hæmningerne falder, og det gør dømmekraften også");
+    expect(statusDetail(0)).toBe("Ingen aktive genstande");
   });
 
   test("ved urealistisk mange genstande viser uglen vej til Ryd", () => {
