@@ -66,6 +66,28 @@ export function minutesToZero(bac: number): number {
   return Math.max(0, Math.round((bac / BURN_PER_HOUR) * 60));
 }
 
+// Minutter til aftenens liste ryddes: kroppen er i nul, og derefter går
+// der SESSION_GAP_HOURS. Nul uden indtastninger.
+export function minutesToClear(
+  logs: readonly Timed[],
+  nowMs: number,
+  body: Body,
+): number {
+  let bac = 0;
+  let last: number | null = null;
+  for (const l of sortByTime(logs)) {
+    if (l.t > nowMs) break;
+    if (last !== null) {
+      bac = Math.max(0, bac - (BURN_PER_HOUR * (l.t - last)) / MS_PER_HOUR);
+    }
+    bac += bacPerDrink(l.unitsX10, body);
+    last = l.t;
+  }
+  if (last === null) return 0;
+  const zeroAt = last + (bac / BURN_PER_HOUR) * MS_PER_HOUR;
+  return Math.max(0, Math.round((zeroAt + SESSION_GAP_MS - nowMs) / 60_000));
+}
+
 // 0..1, styrer baggrund og ugle. Fuldt udslag ved 2 promille.
 export function drunkenness(bac: number): number {
   return Math.min(1, Math.max(0, bac / 2));

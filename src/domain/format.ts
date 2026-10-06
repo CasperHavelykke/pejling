@@ -31,6 +31,12 @@ export function soberLine(minutes: number): string {
   return strings().zeroLine(Math.floor(minutes / 60), minutes % 60);
 }
 
+// Når tallet er nul, men listen stadig står der, fortæller linjen i
+// stedet, hvornår listen ryddes.
+export function clearLine(minutes: number): string {
+  return strings().clearLine(Math.floor(minutes / 60), minutes % 60);
+}
+
 export function entryWord(count: number): string {
   return strings().entryWord(count);
 }

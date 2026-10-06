@@ -7,10 +7,19 @@ import {
   currentSession,
   drunkenness,
   levelIndex,
+  minutesToClear,
   minutesToZero,
   type Body,
 } from "../widmark";
-import { da, daWhole, entryWord, genstandWord, hhmm, soberLine } from "../format";
+import {
+  clearLine,
+  da,
+  daWhole,
+  entryWord,
+  genstandWord,
+  hhmm,
+  soberLine,
+} from "../format";
 import { infoExplanation, isTestHint, levelRows, roastFor } from "../copy";
 import { strings } from "../../i18n";
 import {
@@ -208,6 +217,24 @@ describe("format og tekster", () => {
     expect(soberLine(0)).toBe("");
     expect(soberLine(45)).toBe("Nul aktive genstande om ca. 45 min");
     expect(soberLine(130)).toBe("Nul aktive genstande om ca. 2 t 10 min");
+  });
+
+  test("linjen om tid til listen ryddes", () => {
+    expect(clearLine(45)).toBe("Listen ryddes om ca. 45 min");
+    expect(clearLine(160)).toBe("Listen ryddes om ca. 2 t 40 min");
+  });
+
+  test("minutter til listen ryddes: nul-tidspunkt plus tre timer", () => {
+    expect(minutesToClear([], T0, man80)).toBe(0);
+    // Én genstand: 12 / (80 × 0,68) = 0,2206 ‰ → 88 min til nul.
+    const logs = [{ unitsX10: 10, t: T0 }];
+    expect(minutesToClear(logs, T0, man80)).toBe(88 + 180);
+    expect(minutesToClear(logs, T0 + 2 * H, man80)).toBe(88 + 180 - 120);
+    expect(minutesToClear(logs, T0 + 10 * H, man80)).toBe(0);
+    // Det samme øjeblik, som currentSession tømmer listen.
+    const at = T0 + (88 + 180) * 60_000;
+    expect(currentSession(logs, at + 60_000, man80)).toEqual([]);
+    expect(currentSession(logs, at - 60_000, man80)).toEqual(logs);
   });
 
   test("roast skifter med antal og holder sig i niveauets liste", () => {

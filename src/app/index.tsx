@@ -18,7 +18,13 @@ import { Owl } from "../components/Owl";
 import { SpeechBubble } from "../components/SpeechBubble";
 import { TonightDrawer } from "../components/TonightDrawer";
 import { isTestHint, roastFor, statusFor } from "../domain/copy";
-import { daWhole, hhmm, soberLine, unitsX10Label } from "../domain/format";
+import {
+  clearLine,
+  daWhole,
+  hhmm,
+  soberLine,
+  unitsX10Label,
+} from "../domain/format";
 import { alongTrack, buildTrack } from "../domain/pagerTrack";
 import { setLang, useStrings, type Lang } from "../i18n";
 import { usePejling, type Mode } from "../state/usePejling";
@@ -147,7 +153,12 @@ export default function PejlingScreen() {
   const tight = usable < 700;
   const page = Math.max(0, PAGES.indexOf(p.mode));
 
-  const sober = soberLine(p.minutesToZero);
+  // Mens der er aktive genstande: tid til nul. Derefter: tid til listen
+  // ryddes, så ingen undrer sig over, at gårsdagens liste stadig står der.
+  const sober =
+    p.minutesToZero > 0 || p.tonight.length === 0
+      ? soberLine(p.minutesToZero)
+      : clearLine(p.minutesToClear);
   const summary =
     p.tonight.length > 0
       ? s.main.summary(unitsX10Label(p.totalX10), hhmm(p.tonight[0].t))
@@ -182,12 +193,12 @@ export default function PejlingScreen() {
           },
         ]}
       >
+        {/* Navnet står midt på skærmen: lige brede sider om det. */}
         <View style={styles.topbar}>
-          <View style={styles.topSide}>
-            <Text style={styles.brand} accessibilityRole="header">
-              Pejling
-            </Text>
-          </View>
+          <View style={styles.topSide} />
+          <Text style={styles.brand} accessibilityRole="header">
+            Pejling
+          </Text>
           <View style={[styles.topSide, styles.topRight]}>
             <Pressable
               onPress={() => setInfoOpen(true)}

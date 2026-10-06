@@ -36,6 +36,7 @@ export type Strings = {
   infoStorage: string;
 
   zeroLine: (hours: number, minutes: number) => string;
+  clearLine: (hours: number, minutes: number) => string;
   entryWord: (count: number) => string;
   unitWord: (count: number) => string;
   unitShort: string;

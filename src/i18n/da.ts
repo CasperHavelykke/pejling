@@ -79,6 +79,7 @@ export const da: Strings = {
   // undgås bevidst: det kan læses som et løfte om at være klar til at køre.
   zeroLine: (h, m) =>
     `Nul aktive genstande om ca. ${h ? `${h} t ` : ""}${m} min`,
+  clearLine: (h, m) => `Listen ryddes om ca. ${h ? `${h} t ` : ""}${m} min`,
   // En indtastning er ét tryk på en knap. Den kan fylde mere eller mindre
   // end én genstand, så de to ord må ikke blandes sammen.
   entryWord: (n) => (n === 1 ? "indtastning" : "indtastninger"),

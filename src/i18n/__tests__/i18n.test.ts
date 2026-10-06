@@ -24,6 +24,7 @@ function allText(s: Strings): string[] {
     s.infoDisclaimer,
     s.infoStorage,
     s.zeroLine(2, 10),
+    s.clearLine(2, 10),
     ...Object.values(s.drinks).flatMap((d) => [d.name, d.label, d.sub]),
     ...Object.values(s.groups),
     ...Object.values(s.main).map((v) => (typeof v === "function" ? v("1", "1") : v)),

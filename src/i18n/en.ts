@@ -78,6 +78,7 @@ export const en: Strings = {
 
   zeroLine: (h, m) =>
     `Zero active drinks in about ${h ? `${h} h ` : ""}${m} min`,
+  clearLine: (h, m) => `The list clears in about ${h ? `${h} h ` : ""}${m} min`,
   entryWord: (n) => (n === 1 ? "entry" : "entries"),
   unitWord: (n) => (n === 1 ? "drink" : "drinks"),
   unitShort: "dr.",

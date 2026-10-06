@@ -16,6 +16,7 @@ import {
   currentSession,
   drunkenness,
   levelIndex,
+  minutesToClear,
   minutesToZero,
   type Body,
   type Sex,
@@ -270,6 +271,7 @@ export function usePejling() {
       level: levelIndex(bac),
       t: drunkenness(bac),
       minutesToZero: minutesToZero(bac),
+      minutesToClear: minutesToClear(tonight, now, body),
     };
   }, [logs, now, weightKg, sex]);
 
