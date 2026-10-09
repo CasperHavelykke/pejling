@@ -138,6 +138,7 @@ export const da: Strings = {
     advanced: "Avanceret",
     infoButton: "Om Pejling og dine indstillinger",
     activeLabel: "aktive genstande i kroppen",
+    about: "cirka",
     summary: (units, time) => `${units} genstande i aften · seneste ${time}`,
     nothingYet: "Ingen genstande endnu",
     showList: "Vis listen",

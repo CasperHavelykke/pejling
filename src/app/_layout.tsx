@@ -1,6 +1,7 @@
 import { BricolageGrotesque_600SemiBold } from "@expo-google-fonts/bricolage-grotesque/600SemiBold";
 import {
   Inter_400Regular,
+  Inter_400Regular_Italic,
   Inter_500Medium,
   Inter_700Bold,
   useFonts,
@@ -20,6 +21,7 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     Inter_400Regular,
+    Inter_400Regular_Italic,
     Inter_500Medium,
     Inter_700Bold,
     BricolageGrotesque_600SemiBold,

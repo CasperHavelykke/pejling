@@ -135,6 +135,7 @@ export const en: Strings = {
     advanced: "Advanced",
     infoButton: "About Pejling and your settings",
     activeLabel: "active drinks in your body",
+    about: "about",
     summary: (units, time) => `${units} drinks tonight · latest ${time}`,
     nothingYet: "No drinks yet",
     showList: "Show the list",

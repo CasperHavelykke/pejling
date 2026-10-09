@@ -1,77 +1,55 @@
-import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { levelName, statusDetail } from "../domain/copy";
+import { levelName } from "../domain/copy";
 import { useStrings } from "../i18n";
-import { LEVEL_STEPS } from "../theme/levels";
 import { colors, fonts, radius } from "../theme/tokens";
 
+const STEPS = 5;
 const BAR_WIDTH = 260;
 const PILL_HEIGHT = 34;
 
-// Så længe står forklaringen fremme efter et tryk på pillen.
-const DETAIL_MS = 5000;
-
-// Skalaen under tallet: fem felter i niveauernes farver på én linje. Feltet
-// for det niveau, der gælder, er en pille med navnet; de andre er tynde
-// streger. Et tryk på pillen viser forklaringen under skalaen i nogle
-// sekunder. Ved nul vises intet; tallet siger det hele.
-export function LevelScale({ level }: { level: number }) {
+// Skalaen under tallet: fem felter på én linje. Feltet for det niveau, der
+// gælder, er en lilla pille med navnet, samme farve som knapperne, så man
+// kan se, at den kan trykkes; de andre er tynde dæmpede streger. Et tryk
+// på pillen meldes op, og uglen forklarer niveauet i sin boble. Ved nul
+// vises intet; tallet siger det hele.
+export function LevelScale({
+  level,
+  onPress,
+}: {
+  level: number;
+  onPress: () => void;
+}) {
   const s = useStrings();
-  const [showDetail, setShowDetail] = useState(false);
-  useEffect(() => {
-    if (!showDetail) return;
-    const timer = setTimeout(() => setShowDetail(false), DETAIL_MS);
-    return () => clearTimeout(timer);
-  }, [showDetail, level]);
   if (level === 0) return null;
   const name = levelName(level);
-  const top = level >= LEVEL_STEPS.length;
+  const top = level >= STEPS;
 
   return (
     <View style={styles.wrap}>
       <View style={styles.bar}>
-        {LEVEL_STEPS.map((step, i) =>
+        {Array.from({ length: STEPS }, (_, i) =>
           i + 1 === level ? (
             <Pressable
               key={i}
-              onPress={() => setShowDetail((v) => !v)}
+              onPress={onPress}
               accessibilityRole="button"
               accessibilityLabel={name}
               accessibilityHint={s.main.showLevelHint}
               hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
               style={({ pressed }) => [
                 styles.pill,
-                { backgroundColor: step.fill },
-                pressed && { opacity: 0.8 },
+                pressed && { backgroundColor: colors.btnActive },
               ]}
             >
-              <Text
-                style={[
-                  styles.pillText,
-                  { color: step.ink },
-                  top && styles.pillTop,
-                ]}
-              >
+              <Text style={[styles.pillText, top && styles.pillTop]}>
                 {name.toUpperCase()}
               </Text>
             </Pressable>
           ) : (
-            <View
-              key={i}
-              style={[
-                styles.segment,
-                { backgroundColor: step.fill },
-                i + 1 > level && styles.segmentAhead,
-              ]}
-            />
+            <View key={i} style={styles.segment} />
           ),
         )}
       </View>
-      {showDetail && (
-        <Text style={styles.detail} accessibilityLiveRegion="polite">
-          {statusDetail(level)}
-        </Text>
-      )}
     </View>
   );
 }
@@ -85,27 +63,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
   },
-  segment: { flex: 1, height: 5, borderRadius: 3 },
-  segmentAhead: { opacity: 0.3 },
+  segment: {
+    flex: 1,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: colors.divider,
+  },
   pill: {
     height: PILL_HEIGHT,
     justifyContent: "center",
     paddingHorizontal: 16,
     borderRadius: radius.pill,
+    backgroundColor: colors.btnBg,
   },
   pillText: {
     fontFamily: fonts.medium,
     fontSize: 15,
     letterSpacing: 1.2,
+    color: colors.btnFg,
   },
   pillTop: { fontFamily: fonts.bold },
-  detail: {
-    marginTop: 6,
-    maxWidth: 300,
-    fontFamily: fonts.regular,
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: "center",
-    color: colors.muted,
-  },
 });

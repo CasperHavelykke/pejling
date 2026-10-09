@@ -57,6 +57,8 @@ export type Strings = {
     advanced: string;
     infoButton: string;
     activeLabel: string;
+    // Læses op foran tallet, hvor skærmen viser "~".
+    about: string;
     summary: (units: string, time: string) => string;
     nothingYet: string;
     showList: string;

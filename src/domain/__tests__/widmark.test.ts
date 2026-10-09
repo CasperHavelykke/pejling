@@ -253,7 +253,7 @@ describe("format og tekster", () => {
   });
 
   test("statusDetail er teksten efter tankestregen", () => {
-    expect(statusDetail(2)).toBe("hæmningerne falder, og det gør dømmekraften også");
+    expect(statusDetail(2)).toBe("Hæmningerne falder, og det gør dømmekraften også");
     expect(statusDetail(0)).toBe("Ingen aktive genstande");
   });
 

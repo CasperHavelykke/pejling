@@ -19,9 +19,17 @@ const EAR_RIGHT = "M113,60 L107.6,9 Q107,3 101.6,5.6 L78,17 Z";
 
 // Øjenlågene falder hurtigt i starten og langsommere, jo tættere de er på
 // bunden. Kurven er 1 - (1 - t)², lagt ud i fem punkter.
-const LID_MAX = EYE * 0.62 + 1;
+const LID_MAX = EYE * 0.54;
 const LID_STEPS = [0, 0.25, 0.5, 0.75, 1];
 const LID_HEIGHTS = LID_STEPS.map((t) => (1 - (1 - t) ** 2) * LID_MAX);
+// Over halvvejs skråner lågene en smule udad: den ydre kant falder lidt
+// længere ned end den indre, så uglen ser træt ud og ikke sur. Under
+// halvvejs er de lige, og hældningen stopper ved LID_TILT_AT; mere end
+// det ser ked af det ud. Låget rager et stykke op over øjet, så
+// drejningen ikke åbner en sprække i toppen.
+const LID_OVERSHOOT = 20;
+const LID_TILT_DEG = 4;
+const LID_TILT_AT = 0.7;
 
 // Øjets farve: hvidt, når uglen er ædru, og gradvist mere rødsprængt.
 const EYE_CLEAR = "rgb(243, 245, 254)";
@@ -83,10 +91,23 @@ function Eye({
         style={[
           styles.lid,
           {
-            height: t.interpolate({
-              inputRange: LID_STEPS,
-              outputRange: LID_HEIGHTS,
-            }),
+            height: Animated.add(
+              t.interpolate({ inputRange: LID_STEPS, outputRange: LID_HEIGHTS }),
+              LID_OVERSHOOT,
+            ),
+            transform: [
+              {
+                rotate: t.interpolate({
+                  inputRange: [0, 0.5, LID_TILT_AT, 1],
+                  outputRange: [
+                    "0deg",
+                    "0deg",
+                    `${side === "left" ? -LID_TILT_DEG : LID_TILT_DEG}deg`,
+                    `${side === "left" ? -LID_TILT_DEG : LID_TILT_DEG}deg`,
+                  ],
+                }),
+              },
+            ],
           },
         ]}
       />
@@ -204,10 +225,11 @@ const styles = StyleSheet.create({
   },
   lid: {
     position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    // Lige underkant hele vejen ned. Øjets runde form klipper siderne.
+    left: -LID_OVERSHOOT,
+    right: -LID_OVERSHOOT,
+    top: -LID_OVERSHOOT,
+    // Lige underkant, der skråner over halvvejs. Øjets runde form klipper
+    // siderne.
     backgroundColor: colors.owlBody,
   },
   beak: {

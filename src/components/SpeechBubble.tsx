@@ -1,5 +1,7 @@
 // Uglens taleboble. Når teksten skifter, glider boblen til sin nye størrelse
-// i stedet for at springe, så resten af skærmen følger roligt med.
+// i stedet for at springe. Feltet omkring boblen har fast højde med plads
+// til tre linjer, så uglen og tallet aldrig flytter sig, uanset hvor lang
+// teksten er. Boblen ligger i bunden af feltet, så halen peger på uglen.
 //
 // En usynlig kopi måler, hvor stor boblen skal være. Den synlige boble
 // animerer hen til det mål, mens teksten toner ind.
@@ -9,8 +11,20 @@ import { Animated, Easing, StyleSheet, Text, View } from "react-native";
 import { colors, fonts, radius } from "../theme/tokens";
 
 const DURATION = 280;
+const LINE_HEIGHT = 21;
+const MAX_LINES = 3;
+// Tre linjer plus boblens polstring og kant.
+const FIELD_HEIGHT = MAX_LINES * LINE_HEIGHT + 12 * 2 + 2;
 
-export function SpeechBubble({ text }: { text: string }) {
+export function SpeechBubble({
+  text,
+  italic = false,
+}: {
+  text: string;
+  // Forklaringen af niveauet står i kursiv, så den kan kendes fra uglens
+  // egne kommentarer.
+  italic?: boolean;
+}) {
   const width = useRef(new Animated.Value(0)).current;
   const height = useRef(new Animated.Value(0)).current;
   const fade = useRef(new Animated.Value(1)).current;
@@ -68,16 +82,18 @@ export function SpeechBubble({ text }: { text: string }) {
           onMeasure(e.nativeEvent.layout.width, e.nativeEvent.layout.height)
         }
       >
-        <Text style={styles.text}>{text}</Text>
+        <Text style={[styles.text, italic && styles.italic]}>{text}</Text>
       </View>
 
       <Animated.View style={{ width, height }}>
         <View style={[StyleSheet.absoluteFill, styles.clip]}>
           {target && (
             <Animated.View
-              style={[styles.box, styles.inner, { width: target.w, opacity: fade }]}
+              // Et punkt bredere end målingen, så afrunding af brøkdele af
+              // punkter ikke ombryder teksten til en linje mere end målt.
+              style={[styles.box, styles.inner, { width: target.w + 1, opacity: fade }]}
             >
-              <Text style={styles.text}>{text}</Text>
+              <Text style={[styles.text, italic && styles.italic]}>{text}</Text>
             </Animated.View>
           )}
         </View>
@@ -91,6 +107,8 @@ const styles = StyleSheet.create({
   wrap: {
     alignSelf: "stretch",
     alignItems: "center",
+    justifyContent: "flex-end",
+    height: FIELD_HEIGHT,
   },
   // Fælles mål for den usynlige og den synlige boble, så teksten ombrydes
   // ens i begge.
@@ -116,10 +134,11 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: fonts.regular,
     fontSize: 15,
-    lineHeight: 21,
+    lineHeight: LINE_HEIGHT,
     textAlign: "center",
     color: colors.text,
   },
+  italic: { fontFamily: fonts.italic },
   // En trekant lige under boblen. Den må ikke overlappe boblen, for så
   // bliver den gennemsigtige flade dobbelt så lys, hvor de mødes.
   tail: {
