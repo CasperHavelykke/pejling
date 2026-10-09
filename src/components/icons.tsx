@@ -188,31 +188,33 @@ type ShotShape = {
 };
 
 const SHOT_2CL: ShotShape = {
-  glass: "M7.6 9h8.8l-1 10.1a1 1 0 0 1-1 .9H9.6a1 1 0 0 1-1-.9z",
-  fill: "M8.41 17.2H15.59L15.4 19.1a1 1 0 0 1-1 .9H9.6a1 1 0 0 1-1-.9z",
+  glass: "M8.57 9H15.43L14.65 19.1a1 1 0 0 1-1 .9H10.35a1 1 0 0 1-1-.9z",
+  fill: "M9.2 17.2H14.8L14.65 19.1a1 1 0 0 1-1 .9H10.35a1 1 0 0 1-1-.9z",
 };
 
+// Stærk: indholdet står til kanten, og der er luft under det, så den
+// tomme bund kan ses.
 const SHOT_2CL_STRONG: ShotShape = {
   glass: SHOT_2CL.glass,
-  fill: "M7.6 9H16.4L15.73 15.8H8.27z",
-  line: "M8.3 15.8h7.4",
+  fill: "M8.57 9H15.43L15.03 14.2H8.97z",
+  line: "M8.97 14.2H15.03",
 };
 
 const SHOT_4CL: ShotShape = {
-  glass: "M6 4h12l-1.4 15.1a1 1 0 0 1-1 .9H8.4a1 1 0 0 1-1-.9z",
-  fill: "M7.11 16H16.89L16.6 19.1a1 1 0 0 1-1 .9H8.4a1 1 0 0 1-1-.9z",
+  glass: "M7.32 4H16.68L15.59 19.1a1 1 0 0 1-1 .9H9.41a1 1 0 0 1-1-.9z",
+  fill: "M8.19 16H15.81L15.59 19.1a1 1 0 0 1-1 .9H9.41a1 1 0 0 1-1-.9z",
 };
 
 const SHOT_4CL_STRONG: ShotShape = {
   glass: SHOT_4CL.glass,
-  fill: "M6 4H18L16.89 16H7.11z",
-  line: "M7.1 16h9.8",
+  fill: "M7.32 4H16.68L16.03 13H7.97z",
+  line: "M7.97 13H16.03",
 };
 
 // Simpel-knappens shot: et glas midt imellem de to størrelser.
 const SHOT_SIMPLE: ShotShape = {
-  glass: "M6.6 6.5h10.8l-1.2 12.6a1 1 0 0 1-1 .9H8.8a1 1 0 0 1-1-.9z",
-  fill: "M7.5 16H16.5L16.2 19.1a1 1 0 0 1-1 .9H8.8a1 1 0 0 1-1-.9z",
+  glass: "M7.79 6.5H16.21L15.28 19.1a1 1 0 0 1-1 .9H9.72a1 1 0 0 1-1-.9z",
+  fill: "M8.49 16H15.51L15.28 19.1a1 1 0 0 1-1 .9H9.72a1 1 0 0 1-1-.9z",
 };
 
 function Shot({ shape, ...props }: Props & { shape: ShotShape }) {
