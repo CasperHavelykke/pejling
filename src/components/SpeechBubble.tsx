@@ -13,8 +13,9 @@ import { colors, fonts, radius } from "../theme/tokens";
 const DURATION = 280;
 const LINE_HEIGHT = 21;
 const MAX_LINES = 3;
-// Tre linjer plus boblens polstring og kant.
-const FIELD_HEIGHT = MAX_LINES * LINE_HEIGHT + 12 * 2 + 2;
+// Tre linjer plus boblens polstring og kant. Skærmen bruger tallet til at
+// regne ud, hvor meget plads uglen har.
+export const BUBBLE_FIELD_HEIGHT = MAX_LINES * LINE_HEIGHT + 12 * 2 + 2;
 
 export function SpeechBubble({
   text,
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "flex-end",
-    height: FIELD_HEIGHT,
+    height: BUBBLE_FIELD_HEIGHT,
   },
   // Fælles mål for den usynlige og den synlige boble, så teksten ombrydes
   // ens i begge.

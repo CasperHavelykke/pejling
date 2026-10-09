@@ -11,7 +11,8 @@ const PILL_HEIGHT = 34;
 // gælder, er en lilla pille med navnet, samme farve som knapperne, så man
 // kan se, at den kan trykkes; de andre er tynde dæmpede streger. Et tryk
 // på pillen meldes op, og uglen forklarer niveauet i sin boble. Ved nul
-// vises intet; tallet siger det hele.
+// vises intet, men pladsen holdes, så uglen ikke skifter størrelse ved
+// første genstand; tallet siger det hele.
 export function LevelScale({
   level,
   onPress,
@@ -20,7 +21,7 @@ export function LevelScale({
   onPress: () => void;
 }) {
   const s = useStrings();
-  if (level === 0) return null;
+  if (level === 0) return <View style={[styles.wrap, styles.bar]} />;
   const name = levelName(level);
   const top = level >= STEPS;
 

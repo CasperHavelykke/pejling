@@ -16,7 +16,7 @@ import { DrinkPager } from "../components/DrinkPager";
 import { InfoSheet } from "../components/InfoSheet";
 import { LevelScale } from "../components/LevelScale";
 import { Owl } from "../components/Owl";
-import { SpeechBubble } from "../components/SpeechBubble";
+import { BUBBLE_FIELD_HEIGHT, SpeechBubble } from "../components/SpeechBubble";
 import { TonightDrawer } from "../components/TonightDrawer";
 import { isTestHint, roastFor, statusDetail } from "../domain/copy";
 import {
@@ -41,6 +41,10 @@ const EXPLAIN_MS = 5000;
 
 // Uglens højde i punkter ved skala 1.
 const OWL_HEIGHT = 130;
+// Mindste luft under tallet, før knapperne begynder.
+const SPACER = 22;
+// Så længe må midten vente på målingen, før den vises alligevel.
+const FIT_TIMEOUT_MS = 800;
 
 function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));
@@ -143,19 +147,86 @@ export default function PejlingScreen() {
       outputRange: alongTrack(track, values),
       extrapolate: "clamp",
     });
-  // Egen indtastning bruger samme opstilling som Avanceret.
-  const between = (simple: number, advanced: number) =>
-    along([simple, advanced, advanced]);
   const measured = heights.every((h): h is number => h !== null);
   const panelHeight = measured ? along(heights as number[]) : undefined;
-  // Uglen får den plads, der er tilbage, når tekst og knapper har fået
-  // deres. Tallene er højden af alt andet på skærmen i de to opstillinger.
   const usable = height - insets.top - insets.bottom;
-  const owlSimple = clamp((usable - 570) / OWL_HEIGHT, 0.75, 1.35);
-  const owlAdvanced = clamp((usable - 645) / OWL_HEIGHT, 0.32, 0.9);
   // På de mindste skærme får Avanceret også mindre luft mellem delene.
   const tight = usable < 700;
   const page = Math.max(0, PAGES.indexOf(p.mode));
+  // Luft over boble, ugle og tal i Simpel og i de to høje paneler.
+  const gaps = (i: number) =>
+    i === 0 ? [28, 22, 22] : [tight ? 8 : 14, tight ? 2 : 6, tight ? 6 : 12];
+
+  // Uglen får den plads, der er tilbage, når boble, tal og knapper har
+  // fået deres, så skærmen aldrig skal rulle. Feltet mellem topbaren og
+  // knapperne måles, mens panelet ligger stille; lagt sammen med panelets
+  // højde giver det pladsen uden panel, som gælder for alle tre paneler.
+  // Indtil målingen er der, bruges et skøn ud fra skærmens højde.
+  const scrollPos = useRef(0);
+  useEffect(() => {
+    const id = scrollX.addListener(({ value }) => {
+      scrollPos.current = value;
+    });
+    return () => scrollX.removeListener(id);
+  }, [scrollX]);
+  const [middleBase, setMiddleBase] = useState<number | null>(null);
+  const [numberHeight, setNumberHeight] = useState<number | null>(null);
+  // Feltets seneste mål, og om panelerne havde deres målte højde, da det
+  // blev taget. Før de er målt, er knapfeltet så højt som det højeste
+  // panel. Panelernes højder kommer ofte efter feltets første måling,
+  // uden at feltet ændrer størrelse, så regnestykket laves igen, når de
+  // er der.
+  const middleHeight = useRef<{ h: number; withPanels: boolean } | null>(
+    null,
+  );
+  const updateMiddleBase = useCallback(() => {
+    const m = middleHeight.current;
+    if (m === null || !heights.every((h) => h !== null)) return;
+    const all = heights as number[];
+    let base: number;
+    if (m.withPanels) {
+      const pos = scrollPos.current / width;
+      const at = Math.round(pos);
+      if (Math.abs(pos - at) > 0.02) return;
+      base = m.h + all[at];
+    } else {
+      base = m.h + Math.max(...all);
+    }
+    setMiddleBase((prev) =>
+      prev !== null && Math.abs(prev - base) < 0.5 ? prev : base,
+    );
+  }, [heights, width]);
+  useEffect(updateMiddleBase, [updateMiddleBase]);
+  const onMiddleLayout = (h: number) => {
+    middleHeight.current = { h, withPanels: measured };
+    updateMiddleBase();
+  };
+  const owlFor = (i: number, guess: number, min: number, max: number) => {
+    const panel = heights[i];
+    if (middleBase === null || numberHeight === null || panel === null) {
+      return guess;
+    }
+    const [g1, g2, g3] = gaps(i);
+    const free =
+      middleBase - panel - g1 - BUBBLE_FIELD_HEIGHT - g2 - g3 - numberHeight - SPACER - 1;
+    return clamp(free / OWL_HEIGHT, min, max);
+  };
+  const owls = [
+    owlFor(0, clamp((usable - 630) / OWL_HEIGHT, 0.75, 1.35), 0.75, 1.35),
+    owlFor(1, clamp((usable - 705) / OWL_HEIGHT, 0.32, 0.9), 0.32, 0.9),
+    owlFor(2, clamp((usable - 705) / OWL_HEIGHT, 0.32, 0.9), 0.32, 0.9),
+  ];
+  // Midten vises først, når uglens størrelse er regnet ud fra målingerne,
+  // så den ikke blinker i skønnets størrelse ved opstart. Udebliver
+  // målingen, vises den alligevel efter et øjeblik; en tom skærm er værre
+  // end et blink.
+  const [showAnyway, setShowAnyway] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setShowAnyway(true), FIT_TIMEOUT_MS);
+    return () => clearTimeout(timer);
+  }, []);
+  const fitted =
+    (middleBase !== null && numberHeight !== null) || showAnyway;
 
   // Et tryk på pillen under tallet får uglen til at forklare niveauet i
   // boblen i nogle sekunder; derefter vender dens kommentar tilbage.
@@ -233,27 +304,31 @@ export default function PejlingScreen() {
 
         <ScrollView
           style={styles.middle}
-          contentContainerStyle={styles.middleContent}
+          contentContainerStyle={[styles.middleContent, { opacity: fitted ? 1 : 0 }]}
           alwaysBounceVertical={false}
           showsVerticalScrollIndicator={false}
+          onLayout={(e) => onMiddleLayout(e.nativeEvent.layout.height)}
         >
           {/* I Avanceret fylder knapperne tre rækker. Ugle og luft bliver
-              mindre, så statuslinjen ikke bliver skåret af på små skærme. */}
+              mindre, så skalaen ikke bliver skåret af på små skærme. */}
           <Animated.View
-            style={[styles.bubble, { marginTop: between(28, tight ? 8 : 14) }]}
+            style={[styles.bubble, { marginTop: along(PAGES.map((_, i) => gaps(i)[0])) }]}
           >
             <SpeechBubble text={bubble} italic={explain !== null} />
           </Animated.View>
 
-          <Animated.View style={{ marginTop: between(22, tight ? 2 : 6) }}>
-            <Owl
-              t={testing ? 0 : p.t}
-              scale={between(owlSimple, owlAdvanced)}
-            />
+          <Animated.View style={{ marginTop: along(PAGES.map((_, i) => gaps(i)[1])) }}>
+            <Owl t={testing ? 0 : p.t} scale={along(owls)} />
           </Animated.View>
 
           <Animated.View
-            style={[styles.numberBlock, { marginTop: between(22, tight ? 6 : 12) }]}
+            style={[styles.numberBlock, { marginTop: along(PAGES.map((_, i) => gaps(i)[2])) }]}
+            onLayout={(e) => {
+              const h = e.nativeEvent.layout.height;
+              setNumberHeight((prev) =>
+                prev !== null && Math.abs(prev - h) < 0.5 ? prev : h,
+              );
+            }}
           >
             {/* Tilden minder om, at tallet er et estimat. En usynlig kopi
                 på den anden side holder selve tallet midt på skærmen. */}
@@ -395,7 +470,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.numMuted,
   },
-  spacer: { flex: 1, minHeight: 22 },
+  spacer: { flex: 1, minHeight: SPACER },
   handle: {
     alignSelf: "center",
     alignItems: "center",
