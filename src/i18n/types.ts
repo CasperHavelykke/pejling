@@ -108,6 +108,10 @@ export type Strings = {
     clearTitle: (n: number) => string;
     clearBody: string;
     cancel: string;
+    // Bjælken: forbrændt og stadig aktivt af aftenens genstande.
+    burned: string;
+    active: string;
+    barLabel: (burned: string, active: string) => string;
   };
   info: {
     you: string;

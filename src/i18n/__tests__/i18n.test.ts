@@ -32,6 +32,7 @@ function allText(s: Strings): string[] {
     s.drawer.undoLabel("a", "b"),
     s.drawer.clearTitle(1),
     s.drawer.clearTitle(3),
+    s.drawer.barLabel("1", "2"),
     ...Object.values(s.info),
     ...Object.values(s.custom.types),
     s.custom.page,

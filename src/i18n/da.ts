@@ -181,6 +181,10 @@ export const da: Strings = {
         : `Ryd aftenens ${n} indtastninger?`,
     clearBody: "De kan ikke hentes tilbage.",
     cancel: "Annuller",
+    burned: "Forbrændt",
+    active: "Aktive",
+    barLabel: (burned, active) =>
+      `${burned} genstande forbrændt, ${active} stadig aktive`,
   },
   info: {
     you: "Dig",

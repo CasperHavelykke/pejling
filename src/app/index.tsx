@@ -387,6 +387,7 @@ export default function PejlingScreen() {
         onClose={() => setDrawerOpen(false)}
         drinks={p.tonight}
         totalX10={p.totalX10}
+        activeUnits={p.active}
         soberLine={sober}
         bottomInset={Math.max(insets.bottom, 12) + 10}
         onUndo={p.remove}

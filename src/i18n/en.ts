@@ -176,6 +176,10 @@ export const en: Strings = {
       n === 1 ? "Clear tonight's only entry?" : `Clear tonight's ${n} entries?`,
     clearBody: "They can't be brought back.",
     cancel: "Cancel",
+    burned: "Burned off",
+    active: "Active",
+    barLabel: (burned, active) =>
+      `${burned} drinks burned off, ${active} still active`,
   },
   info: {
     you: "You",

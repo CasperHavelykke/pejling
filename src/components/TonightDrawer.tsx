@@ -24,6 +24,7 @@ export function TonightDrawer({
   onClose,
   drinks,
   totalX10,
+  activeUnits,
   soberLine,
   bottomInset,
   onUndo,
@@ -35,6 +36,8 @@ export function TonightDrawer({
   // Nyeste øverst.
   drinks: readonly DrinkLog[];
   totalX10: number;
+  // Genstande, der stadig er aktive; resten af aftenens er forbrændt.
+  activeUnits: number;
   soberLine: string;
   bottomInset: number;
   onUndo: (id: number) => void;
@@ -49,6 +52,12 @@ export function TonightDrawer({
   const [listHeight, setListHeight] = useState(0);
   const [contentHeight, setContentHeight] = useState(0);
   const scrollable = contentHeight > listHeight + 1;
+  // Bjælken: hele bredden er aftenens genstande, den fyldte del er
+  // forbrændt. Den fylder op fra venstre, som timerne går.
+  const total = totalX10 / 10;
+  const active = Math.min(total, Math.max(0, activeUnits));
+  const burned = Math.max(0, total - active);
+  const burnedPct = total > 0 ? (burned / total) * 100 : 0;
 
   // Rydning kan ikke fortrydes, så der spørges først. Browseren har ikke
   // Alert, så der bruges dens egen dialog.
@@ -104,6 +113,36 @@ ${s.drawer.clearBody}`)) onClear();
           </Pressable>
         )}
       </View>
+
+      {drinks.length > 0 && (
+        <View
+          style={styles.progress}
+          accessibilityRole="progressbar"
+          accessibilityLabel={s.drawer.barLabel(
+            unitsX10Label(Math.round(burned * 10)),
+            unitsX10Label(Math.round(active * 10)),
+          )}
+          accessibilityValue={{ min: 0, max: 100, now: Math.round(burnedPct) }}
+        >
+          <View style={styles.track}>
+            <View style={[styles.fill, { width: `${burnedPct}%` }]} />
+          </View>
+          <View style={styles.progressRow}>
+            <Text style={styles.progressText}>
+              {s.drawer.burned}{" "}
+              <Text style={styles.progressNum}>
+                {unitsX10Label(Math.round(burned * 10))}
+              </Text>
+            </Text>
+            <Text style={styles.progressText}>
+              {s.drawer.active}{" "}
+              <Text style={styles.progressNum}>
+                {unitsX10Label(Math.round(active * 10))}
+              </Text>
+            </Text>
+          </View>
+        </View>
+      )}
 
       <ScrollView
         style={styles.list}
@@ -211,6 +250,21 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.accentText,
   },
+  progress: { marginTop: 12, gap: 6 },
+  track: {
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.divider,
+    overflow: "hidden",
+  },
+  fill: {
+    height: "100%",
+    borderRadius: 4,
+    backgroundColor: colors.num,
+  },
+  progressRow: { flexDirection: "row", justifyContent: "space-between" },
+  progressText: { fontFamily: fonts.regular, fontSize: 12, color: colors.muted },
+  progressNum: { fontFamily: fonts.medium, color: colors.text },
   list: { marginTop: 8, flexGrow: 0 },
   empty: {
     fontFamily: fonts.regular,
