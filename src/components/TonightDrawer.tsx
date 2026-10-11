@@ -1,6 +1,9 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
+  Animated,
+  Easing,
+  LayoutAnimation,
   Platform,
   Pressable,
   ScrollView,
@@ -58,19 +61,46 @@ export function TonightDrawer({
   const active = Math.min(total, Math.max(0, activeUnits));
   const burned = Math.max(0, total - active);
   const burnedPct = total > 0 ? (burned / total) * 100 : 0;
+  // Fyldet glider til sin nye længde, når en genstand fortrydes eller
+  // logges, i stedet for at hoppe.
+  const fillPct = useRef(new Animated.Value(burnedPct)).current;
+  useEffect(() => {
+    Animated.timing(fillPct, {
+      toValue: burnedPct,
+      duration: 350,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+  }, [burnedPct, fillPct]);
+  const fillWidth = fillPct.interpolate({
+    inputRange: [0, 100],
+    outputRange: ["0%", "100%"],
+  });
+  // Rækkerne under glider på plads, når en forsvinder.
+  const animateList = () =>
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
   // Rydning kan ikke fortrydes, så der spørges først. Browseren har ikke
   // Alert, så der bruges dens egen dialog.
   const confirmClear = () => {
     const title = s.drawer.clearTitle(drinks.length);
     if (Platform.OS === "web") {
-      if (window.confirm(`${title}
-${s.drawer.clearBody}`)) onClear();
+      if (window.confirm(`${title}\n${s.drawer.clearBody}`)) {
+        animateList();
+        onClear();
+      }
       return;
     }
     Alert.alert(title, s.drawer.clearBody, [
       { text: s.drawer.cancel, style: "cancel" },
-      { text: s.drawer.clear, style: "destructive", onPress: onClear },
+      {
+        text: s.drawer.clear,
+        style: "destructive",
+        onPress: () => {
+          animateList();
+          onClear();
+        },
+      },
     ]);
   };
 
@@ -125,7 +155,7 @@ ${s.drawer.clearBody}`)) onClear();
           accessibilityValue={{ min: 0, max: 100, now: Math.round(burnedPct) }}
         >
           <View style={styles.track}>
-            <View style={[styles.fill, { width: `${burnedPct}%` }]} />
+            <Animated.View style={[styles.fill, { width: fillWidth }]} />
           </View>
           <View style={styles.progressRow}>
             <Text style={styles.progressText}>
@@ -169,7 +199,10 @@ ${s.drawer.clearBody}`)) onClear();
                 {unitsX10Label(d.unitsX10)} {s.unitShort}
               </Text>
               <Pressable
-                onPress={() => onUndo(d.id)}
+                onPress={() => {
+                  animateList();
+                  onUndo(d.id);
+                }}
                 accessibilityRole="button"
                 accessibilityLabel={s.drawer.undoLabel(
                   drinkName(d.kind),
