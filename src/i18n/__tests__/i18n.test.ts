@@ -167,6 +167,12 @@ describe("det, appen aldrig må sige", () => {
     }
   });
 
+  test("dansk bruger aldrig ordet ædru", () => {
+    for (const text of allText(da)) {
+      expect(text.toLowerCase()).not.toContain("ædru");
+    }
+  });
+
   test("kørsel nævnes kun i forbeholdet", () => {
     for (const set of [da, en]) {
       const rest = allText(set).filter(

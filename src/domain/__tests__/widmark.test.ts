@@ -25,6 +25,7 @@ import {
   isTestHint,
   levelRows,
   roastFor,
+  scalePosition,
   statusDetail,
 } from "../copy";
 import { strings } from "../../i18n";
@@ -255,6 +256,15 @@ describe("format og tekster", () => {
   test("statusDetail er teksten efter tankestregen", () => {
     expect(statusDetail(2)).toBe("Hæmningerne falder, og det gør dømmekraften også");
     expect(statusDetail(0)).toBe("Ingen aktive genstande");
+  });
+
+  test("scalePosition lægger tallet i det rigtige af fem felter", () => {
+    const t = [2, 4, 6, 8];
+    expect(scalePosition(0, t)).toBe(0);
+    expect(scalePosition(1, t)).toBeCloseTo(0.1);
+    expect(scalePosition(7, t)).toBeCloseTo(0.7);
+    expect(scalePosition(9, t)).toBeCloseTo(0.9);
+    expect(scalePosition(50, t)).toBe(1);
   });
 
   test("ved urealistisk mange genstande viser uglen vej til Ryd", () => {

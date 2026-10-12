@@ -26,7 +26,7 @@ export const da: Strings = {
     [
       "Én genstand, og du føler dig allerede sjov. Det er du ikke.",
       "Du har lige sagt “skål” tre gange til den samme øl.",
-      "Du er stadig ædru nok til at høre, hvor kedelig du selv er.",
+      "Du kan stadig høre, hvor kedelig du selv er. Nyd det.",
     ],
     [
       "Du griner af dine egne jokes nu. Ingen andre gør.",

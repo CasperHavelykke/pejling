@@ -14,7 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Chevron } from "../components/Chevron";
 import { DrinkPager } from "../components/DrinkPager";
 import { InfoSheet } from "../components/InfoSheet";
-import { LevelScale } from "../components/LevelScale";
+import { LevelGauge } from "../components/LevelGauge";
 import { Owl } from "../components/Owl";
 import { BUBBLE_FIELD_HEIGHT, SpeechBubble } from "../components/SpeechBubble";
 import { TonightDrawer } from "../components/TonightDrawer";
@@ -330,24 +330,27 @@ export default function PejlingScreen() {
               );
             }}
           >
-            {/* Tilden minder om, at tallet er et estimat. En usynlig kopi
-                på den anden side holder selve tallet midt på skærmen. */}
-            <View
-              style={styles.numberRow}
-              accessible
-              accessibilityLabel={`${s.main.about} ${daWhole(p.active)} ${s.main.activeLabel}`}
-            >
-              <Text style={styles.tilde}>~</Text>
-              <Text style={styles.number}>{daWhole(p.active)}</Text>
-              <Text style={[styles.tilde, styles.tildeGhost]}>~</Text>
-            </View>
-            <Text style={styles.numberLabel}>{s.main.activeLabel}</Text>
-            <LevelScale
+            <LevelGauge
               level={p.level}
+              active={p.active}
+              body={{ weightKg: p.weightKg, sex: p.sex }}
+              background={background}
               onPress={() =>
                 setExplain((v) => (v ? null : statusDetail(p.level)))
               }
-            />
+            >
+              {/* Tilden minder om, at tallet er et estimat. En usynlig kopi
+                  på den anden side holder selve tallet midt på skærmen. */}
+              <View
+                style={styles.numberRow}
+                accessible
+                accessibilityLabel={`${s.main.about} ${daWhole(p.active)} ${s.main.activeLabel}`}
+              >
+                <Text style={styles.tilde}>~</Text>
+                <Text style={styles.number}>{daWhole(p.active)}</Text>
+                <Text style={[styles.tilde, styles.tildeGhost]}>~</Text>
+              </View>
+            </LevelGauge>
           </Animated.View>
 
           {/* Hvornår tallet når nul, står i bunden af listen "I aften". */}
@@ -465,12 +468,6 @@ const styles = StyleSheet.create({
     color: colors.numMuted,
   },
   tildeGhost: { marginRight: 0, marginLeft: 4, opacity: 0 },
-  // Samme farve som tallet, så de to læses som ét.
-  numberLabel: {
-    fontFamily: fonts.regular,
-    fontSize: 13,
-    color: colors.numMuted,
-  },
   spacer: { flex: 1, minHeight: SPACER },
   handle: {
     alignSelf: "center",
