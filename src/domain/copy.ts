@@ -42,20 +42,6 @@ export function statusDetail(level: number): string {
   return detail.charAt(0).toUpperCase() + detail.slice(1);
 }
 
-// Hvor på en skala med fem lige brede felter tallet ligger, 0..1. Feltet
-// for niveau i går fra grænsen under til grænsen over; det øverste felt
-// er lige så bredt som det under, fordi det ingen øvre grænse har.
-export function scalePosition(active: number, thresholds: number[]): number {
-  const edges = [0, ...thresholds];
-  const n = thresholds.length + 1;
-  const last = edges[edges.length - 1];
-  edges.push(last + (last - edges[edges.length - 2]));
-  let i = 0;
-  while (i < n - 1 && active >= edges[i + 1]) i++;
-  const within = (active - edges[i]) / (edges[i + 1] - edges[i]);
-  return Math.min(1, Math.max(0, (i + Math.min(1, Math.max(0, within))) / n));
-}
-
 // Navn på niveau 1-5.
 export function levelName(level: number): string {
   const names = strings().levelNames;

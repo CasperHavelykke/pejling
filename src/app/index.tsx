@@ -14,11 +14,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Chevron } from "../components/Chevron";
 import { DrinkPager } from "../components/DrinkPager";
 import { InfoSheet } from "../components/InfoSheet";
-import { LevelGauge } from "../components/LevelGauge";
+import { LevelHeadline } from "../components/LevelHeadline";
 import { Owl } from "../components/Owl";
 import { BUBBLE_FIELD_HEIGHT, SpeechBubble } from "../components/SpeechBubble";
 import { TonightDrawer } from "../components/TonightDrawer";
-import { isTestHint, roastFor, statusDetail } from "../domain/copy";
+import { isTestHint, roastFor } from "../domain/copy";
 import {
   clearLine,
   daWhole,
@@ -35,9 +35,6 @@ import { colors, fonts, radius, space } from "../theme/tokens";
 
 // Knappanelerne i den rækkefølge, de swipes i.
 const PAGES: readonly Mode[] = ["simple", "advanced", "custom"];
-
-// Så længe står forklaringen i boblen efter et tryk på pillen.
-const EXPLAIN_MS = 5000;
 
 // Uglens højde i punkter ved skala 1.
 const OWL_HEIGHT = 130;
@@ -228,17 +225,7 @@ export default function PejlingScreen() {
   const fitted =
     (middleBase !== null && numberHeight !== null) || showAnyway;
 
-  // Et tryk på pillen under tallet får uglen til at forklare niveauet i
-  // boblen i nogle sekunder; derefter vender dens kommentar tilbage.
-  const [explain, setExplain] = useState<string | null>(null);
-  useEffect(() => {
-    if (explain === null) return;
-    const timer = setTimeout(() => setExplain(null), EXPLAIN_MS);
-    return () => clearTimeout(timer);
-  }, [explain]);
-  useEffect(() => setExplain(null), [p.level]);
-  const bubble =
-    explain ?? roastFor(p.level, p.tonight.length, p.active);
+  const bubble = roastFor(p.level, p.tonight.length, p.active);
 
   // Mens der er aktive genstande: tid til nul. Derefter: tid til listen
   // ryddes, så ingen undrer sig over, at gårsdagens liste stadig står der.
@@ -314,7 +301,7 @@ export default function PejlingScreen() {
           <Animated.View
             style={[styles.bubble, { marginTop: along(PAGES.map((_, i) => gaps(i)[0])) }]}
           >
-            <SpeechBubble text={bubble} italic={explain !== null} />
+            <SpeechBubble text={bubble} />
           </Animated.View>
 
           <Animated.View style={{ marginTop: along(PAGES.map((_, i) => gaps(i)[1])) }}>
@@ -330,27 +317,7 @@ export default function PejlingScreen() {
               );
             }}
           >
-            <LevelGauge
-              level={p.level}
-              active={p.active}
-              body={{ weightKg: p.weightKg, sex: p.sex }}
-              background={background}
-              onPress={() =>
-                setExplain((v) => (v ? null : statusDetail(p.level)))
-              }
-            >
-              {/* Tilden minder om, at tallet er et estimat. En usynlig kopi
-                  på den anden side holder selve tallet midt på skærmen. */}
-              <View
-                style={styles.numberRow}
-                accessible
-                accessibilityLabel={`${s.main.about} ${daWhole(p.active)} ${s.main.activeLabel}`}
-              >
-                <Text style={styles.tilde}>~</Text>
-                <Text style={styles.number}>{daWhole(p.active)}</Text>
-                <Text style={[styles.tilde, styles.tildeGhost]}>~</Text>
-              </View>
-            </LevelGauge>
+            <LevelHeadline level={p.level} numberText={daWhole(p.active)} />
           </Animated.View>
 
           {/* Hvornår tallet når nul, står i bunden af listen "I aften". */}

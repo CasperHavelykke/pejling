@@ -17,15 +17,7 @@ const MAX_LINES = 3;
 // regne ud, hvor meget plads uglen har.
 export const BUBBLE_FIELD_HEIGHT = MAX_LINES * LINE_HEIGHT + 12 * 2 + 2;
 
-export function SpeechBubble({
-  text,
-  italic = false,
-}: {
-  text: string;
-  // Forklaringen af niveauet står i kursiv, så den kan kendes fra uglens
-  // egne kommentarer.
-  italic?: boolean;
-}) {
+export function SpeechBubble({ text }: { text: string }) {
   const width = useRef(new Animated.Value(0)).current;
   const height = useRef(new Animated.Value(0)).current;
   const fade = useRef(new Animated.Value(1)).current;
@@ -83,7 +75,7 @@ export function SpeechBubble({
           onMeasure(e.nativeEvent.layout.width, e.nativeEvent.layout.height)
         }
       >
-        <Text style={[styles.text, italic && styles.italic]}>{text}</Text>
+        <Text style={styles.text}>{text}</Text>
       </View>
 
       <Animated.View style={{ width, height }}>
@@ -94,7 +86,7 @@ export function SpeechBubble({
               // punkter ikke ombryder teksten til en linje mere end målt.
               style={[styles.box, styles.inner, { width: target.w + 1, opacity: fade }]}
             >
-              <Text style={[styles.text, italic && styles.italic]}>{text}</Text>
+              <Text style={styles.text}>{text}</Text>
             </Animated.View>
           )}
         </View>
@@ -139,7 +131,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: colors.text,
   },
-  italic: { fontFamily: fonts.italic },
   // En trekant lige under boblen. Den må ikke overlappe boblen, for så
   // bliver den gennemsigtige flade dobbelt så lys, hvor de mødes.
   tail: {

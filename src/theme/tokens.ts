@@ -42,8 +42,6 @@ export const colors = {
 // på det højeste trin. Bricolage Grotesque bruges kun til ordet "Pejling".
 export const fonts = {
   regular: "Inter_400Regular",
-  // Kursiv bruges kun til forklaringen i uglens boble.
-  italic: "Inter_400Regular_Italic",
   medium: "Inter_500Medium",
   bold: "Inter_700Bold",
   wordmark: "BricolageGrotesque_600SemiBold",

@@ -142,7 +142,6 @@ export const da: Strings = {
     summary: (units, time) => `${units} genstande i aften · seneste ${time}`,
     nothingYet: "Ingen genstande endnu",
     showList: "Vis listen",
-    showLevelHint: "Viser, hvad niveauet betyder",
   },
   custom: {
     page: "Tilpasset",
