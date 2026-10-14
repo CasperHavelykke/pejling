@@ -191,7 +191,9 @@ export function TonightDrawer({
         ) : (
           drinks.map((d) => (
             <View key={d.id} style={styles.row}>
-              <Text style={styles.time}>{hhmm(d.t)}</Text>
+              <Text style={styles.time} numberOfLines={1}>
+                {hhmm(d.t)}
+              </Text>
               <Text style={styles.name} numberOfLines={1}>
                 {drinkName(d.kind)}
               </Text>
@@ -313,8 +315,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.divider,
   },
+  // Mindste bredde, så navnene står lige; vokser med større skrift i
+  // stedet for at ombryde.
   time: {
-    width: 44,
+    minWidth: 44,
     fontFamily: fonts.regular,
     fontSize: 14,
     color: colors.muted,
