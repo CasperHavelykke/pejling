@@ -236,6 +236,16 @@ export function InfoSheet({
           ]}
         >
           <Text style={styles.feedbackText}>{s.info.feedback}</Text>
+          {/* Pil ud af en firkant: åbner uden for appen (Lucide external-link). */}
+          <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+            <Path
+              d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+              stroke={colors.accentText}
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </Svg>
         </Pressable>
         <Text style={styles.help}>
           {feedbackFailed ? s.info.feedbackFailed : s.info.feedbackHelp}
@@ -315,6 +325,9 @@ const styles = StyleSheet.create({
   sexRow: { flexDirection: "row", height: 40, alignItems: "center" },
   feedback: {
     alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
     paddingVertical: 4,
     paddingHorizontal: 6,
     marginLeft: -6,
