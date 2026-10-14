@@ -200,6 +200,14 @@ export const en: Strings = {
     tableHead: "Active drinks",
     now: "now",
     dataTitle: "Your data",
+    feedback: "Found a bug? Write to me",
+    feedbackHelp:
+      "Pejling is made by one person, and your feedback is what makes it better. If something looks wrong or odd, take a screenshot and send it. The button opens your mail app with the app version and your phone model filled in, so the bug is easier to track down. You send it yourself.",
+    feedbackSubject: "Feedback on Pejling",
+    feedbackVersion: "Version",
+    feedbackSystem: "System",
+    feedbackDevice: "Phone",
+    feedbackFailed: "Couldn't open your mail app. Write to casper.roket@proton.me.",
     close: "Close",
   },
   history: {

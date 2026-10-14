@@ -205,6 +205,14 @@ export const da: Strings = {
     tableHead: "Aktive genstande",
     now: "nu",
     dataTitle: "Dine data",
+    feedback: "Fundet en fejl? Skriv til mig",
+    feedbackHelp:
+      "Pejling er lavet af én person, og din feedback er det, der gør den bedre. Ser du noget, der er forkert eller mærkeligt, så tag et skærmbillede og send det. Knappen åbner din mail med appens version og din telefonmodel skrevet ind, så fejlen er lettere at finde. Du sender selv.",
+    feedbackSubject: "Feedback på Pejling",
+    feedbackVersion: "Version",
+    feedbackSystem: "System",
+    feedbackDevice: "Telefon",
+    feedbackFailed: "Kunne ikke åbne din mail. Skriv til casper.roket@proton.me.",
     close: "Luk",
   },
   history: {

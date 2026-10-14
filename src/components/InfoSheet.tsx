@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { infoExplanation, levelRows, statusDetail } from "../domain/copy";
@@ -8,6 +9,7 @@ import {
   type Sex,
 } from "../domain/widmark";
 import { useLang, useStrings, type Lang } from "../i18n";
+import { openFeedback } from "../support/feedback";
 import { LEVEL_STEPS } from "../theme/levels";
 import { colors, fonts, radius } from "../theme/tokens";
 import { BottomPanel } from "./BottomPanel";
@@ -81,6 +83,16 @@ export function InfoSheet({
   const s = useStrings();
   const lang = useLang();
   const body: Body = { weightKg, sex };
+  const [feedbackFailed, setFeedbackFailed] = useState(false);
+  const sendFeedback = async () => {
+    const ok = await openFeedback({
+      subject: s.info.feedbackSubject,
+      version: s.info.feedbackVersion,
+      system: s.info.feedbackSystem,
+      device: s.info.feedbackDevice,
+    });
+    setFeedbackFailed(!ok);
+  };
   const reminderOptions = [
     { value: "off", label: s.info.off },
     { value: "on", label: s.info.on },
@@ -211,6 +223,23 @@ export function InfoSheet({
 
         <Text style={styles.heading}>{s.info.dataTitle}</Text>
         <Text style={styles.body}>{s.infoStorage}</Text>
+
+        <View style={styles.rule} />
+
+        <Pressable
+          onPress={sendFeedback}
+          accessibilityRole="link"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          style={({ pressed }) => [
+            styles.feedback,
+            pressed && { backgroundColor: colors.accentTint },
+          ]}
+        >
+          <Text style={styles.feedbackText}>{s.info.feedback}</Text>
+        </Pressable>
+        <Text style={styles.help}>
+          {feedbackFailed ? s.info.feedbackFailed : s.info.feedbackHelp}
+        </Text>
       </ScrollView>
 
       {/* Ligger uden for rullefeltet, så krydset altid kan nås. */}
@@ -284,6 +313,18 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   sexRow: { flexDirection: "row", height: 40, alignItems: "center" },
+  feedback: {
+    alignSelf: "flex-start",
+    paddingVertical: 4,
+    paddingHorizontal: 6,
+    marginLeft: -6,
+    borderRadius: radius.ghost,
+  },
+  feedbackText: {
+    fontFamily: fonts.medium,
+    fontSize: 15,
+    color: colors.accentText,
+  },
   help: {
     marginTop: 6,
     fontFamily: fonts.regular,

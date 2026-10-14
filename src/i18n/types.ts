@@ -131,6 +131,14 @@ export type Strings = {
     // Mærket på den række i skalaen, der gælder lige nu.
     now: string;
     dataTitle: string;
+    // Feedback via brugerens eget mailprogram.
+    feedback: string;
+    feedbackHelp: string;
+    feedbackSubject: string;
+    feedbackVersion: string;
+    feedbackSystem: string;
+    feedbackDevice: string;
+    feedbackFailed: string;
     close: string;
   };
   history: {
